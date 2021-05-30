@@ -345,6 +345,41 @@ invalidNumberType
 
 	self error: self class invalidNumberTypeErrorDescription! !
 
+
+!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 18:36:52'!
+beAddedToFraccion: aFraccionAugend
+	^ self subclassResponsibility.! !
+
+!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:06:52'!
+beMultipliedByEntero: anEnteroMultiplier
+	^ self subclassResponsibility .! !
+
+!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:09:06'!
+beMultipliedByFraccion: aFraccionMultiplier
+
+	^self subclassResponsibility.! !
+
+!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:45:56'!
+beSubtractedByEntero: AnEnteroMinuend
+
+	^ self subclassResponsibility .! !
+
+!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:55:54'!
+beSubtractedByFraccion: aFraccionMinuend
+
+	^self subclassResponsibility ! !
+
+!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:27:21'!
+divideEntero: anEnteroDividend
+	^ self subclassResponsibility .! !
+
+!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:28:46'!
+divideFraccion: aFraccionDividend
+
+	^ self subclassResponsibility.
+
+	! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Numero class' category: 'Numeros-Parte2-Ejercicio'!
@@ -368,25 +403,25 @@ Numero subclass: #Entero
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:13'!
-* aMultiplier 
+!Entero methodsFor: 'arithmetic operations' stamp: 'TP 5/29/2021 19:06:52'!
+* aMultiplier
 	
-	^self class with: value * aMultiplier integerValue
+	^ aMultiplier beMultipliedByEntero: self.
+	
+	
 	! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'mg 5/27/2021 21:06:13'!
 + anAdder
 	^ anAdder beAddedToEntero: self.! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'NR 9/23/2018 23:40:37'!
-- aSubtrahend 
-	
-	^ self class with: value - aSubtrahend integerValue.! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'TP 5/29/2021 19:53:54'!
+- aSubtrahend
+	^ aSubtrahend beSubtractedByEntero: self.! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
-/ aDivisor 
-	
-	^Fraccion with: self over: aDivisor! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'TP 5/29/2021 19:27:21'!
+/ aDivisor
+	^ aDivisor divideEntero: self.! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'HAW 9/24/2018 08:47:50'!
 fibonacci
@@ -461,9 +496,39 @@ greatestCommonDivisorWith: anEntero
 	^self class with: (value gcd: anEntero integerValue)! !
 
 
-!Entero methodsFor: 'as yet unclassified' stamp: 'mg 5/27/2021 21:03:10'!
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:38:24'!
 beAddedToEntero: anEnteroAugend
 	^ self class with: anEnteroAugend integerValue + value.! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:34:44'!
+beAddedToFraccion: aFraccionAugend
+	^ self * aFraccionAugend denominator + aFraccionAugend numerator / aFraccionAugend denominator.! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:36:07'!
+beMultipliedByEntero: anEnteroMultiplier
+	^ self class with: value * anEnteroMultiplier integerValue.! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:37:29'!
+beMultipliedByFraccion: aFraccionMultiplier
+	^ aFraccionMultiplier numerator * self / aFraccionMultiplier denominator.! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:52:58'!
+beSubtractedByEntero: AnEnteroMinuend
+	^ self class with: AnEnteroMinuend integerValue - value.! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:55:54'!
+beSubtractedByFraccion: aFraccionMinuend
+	^ aFraccionMinuend numerator - (self * aFraccionMinuend denominator) / aFraccionMinuend denominator .! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:27:21'!
+divideEntero: anEnteroDividend
+	^ Fraccion
+			with: anEnteroDividend
+			over: self.! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:30:07'!
+divideFraccion: aFraccionDividend
+	^ aFraccionDividend numerator / (aFraccionDividend denominator * self).! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -491,39 +556,22 @@ Numero subclass: #Fraccion
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
-* aMultiplier 
-	
-	^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'TP 5/29/2021 19:12:30'!
+* aMultiplier
+	^ aMultiplier beMultipliedByFraccion: self.
 	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'mg 5/27/2021 21:13:54'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'TP 5/29/2021 18:46:15'!
 + anAdder
-	| newNumerator newDenominator |
-	(anAdder isKindOf: Fraccion)
-		ifTrue: [
-			newNumerator _ numerator * anAdder denominator + (denominator * anAdder numerator).
-			newDenominator _ denominator * anAdder denominator.
-			^ newNumerator / newDenominator ]
-		ifFalse: [
-			 ^ anAdder * self denominator + self numerator / self denominator].
-	^self error: '¡Es imposible que esto ocurra!!'! !
+	^ anAdder beAddedToFraccion: self.! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'NR 9/23/2018 23:43:50'!
-- aSubtrahend 
-	
-	| newNumerator newDenominator |
-	
-	newNumerator := (numerator * aSubtrahend denominator) - (denominator * aSubtrahend numerator).
-	newDenominator := denominator * aSubtrahend denominator.
-	
-	^newNumerator / newDenominator 
-! !
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'TP 5/29/2021 19:55:54'!
+- aSubtrahend
+	^ aSubtrahend beSubtractedByFraccion: self.! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
-/ aDivisor 
-	
-	^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)! !
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'TP 5/29/2021 19:32:32'!
+/ aDivisor
+	^ aDivisor divideFraccion: self.! !
 
 
 !Fraccion methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 20:42'!
@@ -584,9 +632,45 @@ printOn: aStream
 		print: denominator ! !
 
 
-!Fraccion methodsFor: 'as yet unclassified' stamp: 'mg 5/27/2021 21:03:10'!
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 18:36:37'!
 beAddedToEntero: anEnteroAugend
-	^ (anEnteroAugend * self denominator + self numerator) / self denominator ! !
+	^ anEnteroAugend * self denominator + self numerator / self denominator.! !
+
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 18:42:06'!
+beAddedToFraccion: aFraccionAugend
+	|newNumerator newDenominator|
+	newNumerator _ numerator * aFraccionAugend denominator + (denominator * aFraccionAugend numerator).
+			newDenominator _ denominator * aFraccionAugend denominator.
+			^ newNumerator / newDenominator.! !
+
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:06:52'!
+beMultipliedByEntero: anEnteroMultiplier
+
+	^ numerator * anEnteroMultiplier / denominator.! !
+
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:11:44'!
+beMultipliedByFraccion: aFraccionMultiplier
+	^ numerator * aFraccionMultiplier numerator / (denominator * aFraccionMultiplier denominator) .! !
+
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:45:56'!
+beSubtractedByEntero: anEnteroMinuend
+	^ anEnteroMinuend *  denominator -  numerator /  denominator! !
+
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:55:54'!
+beSubtractedByFraccion: aFraccionMinuend
+	 | newNumerator newDenominator |
+		newNumerator _ aFraccionMinuend numerator * self denominator - (aFraccionMinuend denominator * self numerator).
+		newDenominator _ aFraccionMinuend denominator * self denominator.
+		^ newNumerator / newDenominator .! !
+
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:27:21'!
+divideEntero: anEnteroDividend
+
+	^ anEnteroDividend *  denominator /  numerator.! !
+
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:31:56'!
+divideFraccion: aFraccionDividend
+	^ aFraccionDividend numerator *  denominator / ( aFraccionDividend denominator * numerator).! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
