@@ -547,7 +547,7 @@ checkThisValueCanBeOfClass: aValue
 negativeFibonacciErrorDescription
 	^ ' Fibonacci no está definido aquí para Enteros Negativos'! !
 
-!Entero class methodsFor: 'instance creation' stamp: 'mg 5/31/2021 16:54:18'!
+!Entero class methodsFor: 'instance creation' stamp: 'mg 5/31/2021 17:16:22'!
 with: aValue
 	"Esta verificacion esta puesta por si se equivocan y quieren crear un Entero pasando otra cosa que un Integer - Hernan"
 	| subclass |
@@ -556,10 +556,7 @@ with: aValue
 		detect: [ :class |
 			class checkThisValueCanBeOfClass: aValue ]
 		ifNone: [ self error: 'error' ].
-	^ subclass new initalizeWith: aValue"aValue isZero ifTrue: [ ^ Cero new initalizeWith: 0 ].
-	aValue = 1 ifTrue: [ ^ Uno new initalizeWith: 1 ].
-	aValue < 0 ifTrue: [ ^ Negativo new initalizeWith: aValue ].
-	^ NoCero new initalizeWith: aValue.".! !
+	^ subclass new initalizeWith: aValue.! !
 
 
 !classDefinition: #Cero category: 'Numeros-Parte2-Ejercicio'!
