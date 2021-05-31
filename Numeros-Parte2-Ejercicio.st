@@ -266,25 +266,22 @@ test42SignIsCorrectlyAssignedToFractionWithNegativeDivisor
 	self assert: oneHalf negated equals: (one / negativeTwo)! !
 
 
-!NumeroTest methodsFor: 'setup' stamp: 'NR 9/23/2018 23:46:28'!
+!NumeroTest methodsFor: 'setup' stamp: 'TP 5/30/2021 19:15:21'!
 setUp
-
-	zero := Entero with: 0.
-	one := Entero with: 1.
-	two := Entero with: 2.
-	three:= Entero with: 3.
-	four := Entero with: 4.
-	five := Entero with: 5.
-	eight := Entero with: 8.
-	negativeOne := Entero with: -1.
-	negativeTwo := Entero with: -2.
-	
-	oneHalf := one / two.
-	oneFifth := one / five.
-	twoFifth := two / five.
-	twoTwentyfifth := two / (Entero with: 25).
-	fiveHalfs := five / two.
-	! !
+	zero _ Cero with: 0.
+	one _ NoCero with: 1.
+	two _ NoCero with: 2.
+	three _ NoCero with: 3.
+	four _ NoCero with: 4.
+	five _ NoCero with: 5.
+	eight _ NoCero with: 8.
+	negativeOne _ NoCero with: -1.
+	negativeTwo _ NoCero with: -2.
+	oneHalf _ one / two.
+	oneFifth _ one / five.
+	twoFifth _ two / five.
+	twoTwentyfifth _ two / (NoCero with: 25).
+	fiveHalfs _ five / two.! !
 
 
 !classDefinition: #Numero category: 'Numeros-Parte2-Ejercicio'!
@@ -340,45 +337,45 @@ isZero
 beAddedToEntero: anEnteroAugend
 	self subclassResponsibility! !
 
-!Numero methodsFor: 'private' stamp: 'HernanWilkinson 5/7/2016 22:48'!
-invalidNumberType
-
-	self error: self class invalidNumberTypeErrorDescription! !
-
-
-!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 18:36:52'!
+!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 18:36:52'!
 beAddedToFraccion: aFraccionAugend
 	^ self subclassResponsibility.! !
 
-!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:06:52'!
+!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:06:52'!
 beMultipliedByEntero: anEnteroMultiplier
 	^ self subclassResponsibility .! !
 
-!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:09:06'!
+!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:09:06'!
 beMultipliedByFraccion: aFraccionMultiplier
 
 	^self subclassResponsibility.! !
 
-!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:45:56'!
+!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:45:56'!
 beSubtractedByEntero: AnEnteroMinuend
 
 	^ self subclassResponsibility .! !
 
-!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:55:54'!
+!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:55:54'!
 beSubtractedByFraccion: aFraccionMinuend
 
 	^self subclassResponsibility ! !
 
-!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:27:21'!
+!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:27:21'!
 divideEntero: anEnteroDividend
 	^ self subclassResponsibility .! !
 
-!Numero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:28:46'!
+!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:28:46'!
 divideFraccion: aFraccionDividend
 
 	^ self subclassResponsibility.
 
 	! !
+
+!Numero methodsFor: 'private' stamp: 'HernanWilkinson 5/7/2016 22:48'!
+invalidNumberType
+
+	self error: self class invalidNumberTypeErrorDescription! !
+
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -479,10 +476,9 @@ isOne
 	
 	^value = 1! !
 
-!Entero methodsFor: 'testing' stamp: 'HernanWilkinson 5/7/2016 20:12'!
+!Entero methodsFor: 'testing' stamp: 'TP 5/30/2021 19:20:13'!
 isZero
-	
-	^value = 0! !
+	^ value = 0.! !
 
 
 !Entero methodsFor: 'arithmetic operations - private' stamp: 'HernanWilkinson 5/7/2016 21:55'!
@@ -496,7 +492,13 @@ greatestCommonDivisorWith: anEntero
 	^self class with: (value gcd: anEntero integerValue)! !
 
 
-!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:38:24'!
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:42'!
+XXX
+
+
+	^ self subclassResponsibility .! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:22:26'!
 beAddedToEntero: anEnteroAugend
 	^ self class with: anEnteroAugend integerValue + value.! !
 
@@ -512,13 +514,23 @@ beMultipliedByEntero: anEnteroMultiplier
 beMultipliedByFraccion: aFraccionMultiplier
 	^ aFraccionMultiplier numerator * self / aFraccionMultiplier denominator.! !
 
-!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:52:58'!
-beSubtractedByEntero: AnEnteroMinuend
-	^ self class with: AnEnteroMinuend integerValue - value.! !
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:30:01'!
+beSubtractedByEntero: anEnteroMinuend
+	anEnteroMinuend integerValue - value = 0 ifTrue: [ ^ Cero with: 0 ].
+	^ self class with: anEnteroMinuend integerValue - value.! !
 
 !Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:55:54'!
 beSubtractedByFraccion: aFraccionMinuend
 	^ aFraccionMinuend numerator - (self * aFraccionMinuend denominator) / aFraccionMinuend denominator .! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:42:01'!
+canThisNumberBeADivisor
+
+		^self subclassResponsibility.! !
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:39:09'!
+canThisNumberBeANumerator
+	^ self subclassResponsibility.! !
 
 !Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:27:21'!
 divideEntero: anEnteroDividend
@@ -540,13 +552,100 @@ Entero class
 negativeFibonacciErrorDescription
 	^ ' Fibonacci no está definido aquí para Enteros Negativos'! !
 
-!Entero class methodsFor: 'instance creation' stamp: 'HernanWilkinson 5/7/2016 22:53'!
-with: aValue 
-	
+!Entero class methodsFor: 'instance creation' stamp: 'TP 5/30/2021 20:38:38'!
+with: aValue
 	"Esta verificacion esta puesta por si se equivocan y quieren crear un Entero pasando otra cosa que un Integer - Hernan"
-	aValue isInteger ifFalse: [  self error: 'aValue debe ser anInteger' ].
-	
-	^self new initalizeWith: aValue! !
+	aValue isInteger ifFalse: [ self error: 'aValue debe ser anInteger' ].
+	aValue isZero ifTrue: [ ^ Cero new initalizeWith: 0 ].
+	aValue = 1 ifTrue: [ ^ Uno new initalizeWith: 1 ].
+	^ NoCero new initalizeWith: aValue.! !
+
+
+!classDefinition: #Cero category: 'Numeros-Parte2-Ejercicio'!
+Entero subclass: #Cero
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros-Parte2-Ejercicio'!
+
+!Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:14'!
+XXX
+	^ self value.! !
+
+!Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:47:24'!
+canThisNumberBeADivisor
+	^ self error: self class canNotDivideByZeroErrorDescription.! !
+
+!Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:38:42'!
+canThisNumberBeANumerator
+	^ self error: 'una fraccion no puede ser cero'.! !
+
+!Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:04:39'!
+isZero
+
+	^ true.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Cero class' category: 'Numeros-Parte2-Ejercicio'!
+Cero class
+	instanceVariableNames: ''!
+
+!Cero class methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:53:28'!
+initializeInItsClass
+	^ self class new initializeWith: 0.! !
+
+
+!classDefinition: #NoCero category: 'Numeros-Parte2-Ejercicio'!
+Entero subclass: #NoCero
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros-Parte2-Ejercicio'!
+
+!NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:05'!
+XXX
+
+! !
+
+!NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:23:31'!
+canThisNumberBeADenominator
+	^ self.! !
+
+!NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:44:11'!
+canThisNumberBeADivisor
+
+! !
+
+!NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:38:29'!
+canThisNumberBeANumerator
+	^ self.! !
+
+!NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:04:59'!
+isZero
+	^ false.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'NoCero class' category: 'Numeros-Parte2-Ejercicio'!
+NoCero class
+	instanceVariableNames: ''!
+
+!NoCero class methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:55:04'!
+initializeInItsClass
+	^ self class new initializeWith: self .! !
+
+
+!classDefinition: #Uno category: 'Numeros-Parte2-Ejercicio'!
+NoCero subclass: #Uno
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros-Parte2-Ejercicio'!
+
+!Uno methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:23:23'!
+canThisNumberBeADenominator
+	^ self error: 'una fraccion no puede tener denominador 1 porque sino es un entero' .! !
 
 
 !classDefinition: #Fraccion category: 'Numeros-Parte2-Ejercicio'!
@@ -596,15 +695,13 @@ numerator
 	^ numerator! !
 
 
-!Fraccion methodsFor: 'initialization' stamp: 'HernanWilkinson 5/7/2016 22:54'!
+!Fraccion methodsFor: 'initialization' stamp: 'TP 5/30/2021 20:23:41'!
 initializeWith: aNumerator over: aDenominator
-
 	"Estas precondiciones estan por si se comenten errores en la implementacion - Hernan"
-	aNumerator isZero ifTrue: [ self error: 'una fraccion no puede ser cero' ].
-	aDenominator isOne ifTrue: [ self error: 'una fraccion no puede tener denominador 1 porque sino es un entero' ].
-	
-	numerator := aNumerator.
-	denominator := aDenominator ! !
+	aNumerator canThisNumberBeANumerator.
+	aDenominator canThisNumberBeADenominator.
+	numerator _ aNumerator.
+	denominator _ aDenominator.! !
 
 
 !Fraccion methodsFor: 'testing' stamp: 'NR 9/23/2018 23:41:38'!
@@ -632,9 +729,9 @@ printOn: aStream
 		print: denominator ! !
 
 
-!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 18:36:37'!
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 18:41:03'!
 beAddedToEntero: anEnteroAugend
-	^ anEnteroAugend * self denominator + self numerator / self denominator.! !
+	^ self + anEnteroAugend .! !
 
 !Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 18:42:06'!
 beAddedToFraccion: aFraccionAugend
@@ -643,10 +740,9 @@ beAddedToFraccion: aFraccionAugend
 			newDenominator _ denominator * aFraccionAugend denominator.
 			^ newNumerator / newDenominator.! !
 
-!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:06:52'!
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 18:42:14'!
 beMultipliedByEntero: anEnteroMultiplier
-
-	^ numerator * anEnteroMultiplier / denominator.! !
+	^ self * anEnteroMultiplier .! !
 
 !Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:11:44'!
 beMultipliedByFraccion: aFraccionMultiplier
@@ -656,12 +752,12 @@ beMultipliedByFraccion: aFraccionMultiplier
 beSubtractedByEntero: anEnteroMinuend
 	^ anEnteroMinuend *  denominator -  numerator /  denominator! !
 
-!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:55:54'!
+!Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 18:28:30'!
 beSubtractedByFraccion: aFraccionMinuend
-	 | newNumerator newDenominator |
-		newNumerator _ aFraccionMinuend numerator * self denominator - (aFraccionMinuend denominator * self numerator).
-		newDenominator _ aFraccionMinuend denominator * self denominator.
-		^ newNumerator / newDenominator .! !
+	| newNumerator newDenominator |
+	newNumerator _ aFraccionMinuend numerator *  denominator - (aFraccionMinuend denominator *  numerator).
+	newDenominator _ aFraccionMinuend denominator *  denominator.
+	^ newNumerator / newDenominator.! !
 
 !Fraccion methodsFor: 'as yet unclassified' stamp: 'TP 5/29/2021 19:27:21'!
 divideEntero: anEnteroDividend
@@ -678,21 +774,16 @@ divideFraccion: aFraccionDividend
 Fraccion class
 	instanceVariableNames: ''!
 
-!Fraccion class methodsFor: 'intance creation' stamp: 'NR 9/23/2018 23:45:19'!
+!Fraccion class methodsFor: 'intance creation' stamp: 'TP 5/30/2021 20:55:51'!
 with: aDividend over: aDivisor
-
 	| greatestCommonDivisor numerator denominator |
-	
-	aDivisor isZero ifTrue: [ self error: self canNotDivideByZeroErrorDescription ].
-	aDividend isZero ifTrue: [ ^aDividend ].
-	
-	aDivisor isNegative ifTrue:[ ^aDividend negated / aDivisor negated].
-	
-	greatestCommonDivisor := aDividend greatestCommonDivisorWith: aDivisor. 
-	numerator := aDividend // greatestCommonDivisor.
-	denominator := aDivisor // greatestCommonDivisor.
-	
-	denominator isOne ifTrue: [ ^numerator ].
-
-	^self new initializeWith: numerator over: denominator
-	! !
+	aDivisor canThisNumberBeADivisor.
+	aDividend XXX.
+	aDivisor isNegative ifTrue: [ ^ aDividend negated / aDivisor negated ].
+	greatestCommonDivisor _ aDividend greatestCommonDivisorWith: aDivisor.
+	numerator _ aDividend // greatestCommonDivisor.
+	denominator _ aDivisor // greatestCommonDivisor.
+	denominator isOne ifTrue: [ ^ numerator ].
+	^ self new
+		initializeWith: numerator
+		over: denominator.! !
