@@ -464,9 +464,8 @@ isZero
 	^ value = 0.! !
 
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'mg 5/31/2021 16:54:03'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'mg 5/31/2021 16:57:37'!
 // aDivisor
-	"aDivisor = self value ifTrue: [ ^ self class with: 1 ]."
 	^ self class with: value // aDivisor integerValue.! !
 
 !Entero methodsFor: 'arithmetic operations - private' stamp: 'HernanWilkinson 5/7/2016 21:00'!
@@ -474,12 +473,6 @@ greatestCommonDivisorWith: anEntero
 	
 	^self class with: (value gcd: anEntero integerValue)! !
 
-
-!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:42'!
-XXX
-
-
-	^ self subclassResponsibility .! !
 
 !Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:22:26'!
 beAddedToEntero: anEnteroAugend
@@ -576,10 +569,6 @@ Entero subclass: #Cero
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:14'!
-XXX
-	^ self value.! !
-
 !Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:47:24'!
 canThisNumberBeADivisor
 	^ self error: self class canNotDivideByZeroErrorDescription.! !
@@ -622,11 +611,6 @@ Entero subclass: #NoCero
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
-
-!NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:05'!
-XXX
-
-! !
 
 !NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:23:31'!
 canThisNumberBeADenominator
