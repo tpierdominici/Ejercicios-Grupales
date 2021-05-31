@@ -337,45 +337,38 @@ isZero
 beAddedToEntero: anEnteroAugend
 	self subclassResponsibility! !
 
-!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 18:36:52'!
+!Numero methodsFor: 'private' stamp: 'mg 5/31/2021 16:50:59'!
 beAddedToFraccion: aFraccionAugend
-	^ self subclassResponsibility.! !
+	self subclassResponsibility.! !
 
-!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:06:52'!
+!Numero methodsFor: 'private' stamp: 'mg 5/31/2021 16:51:02'!
 beMultipliedByEntero: anEnteroMultiplier
-	^ self subclassResponsibility .! !
+	self subclassResponsibility.! !
 
-!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:09:06'!
+!Numero methodsFor: 'private' stamp: 'mg 5/31/2021 16:51:06'!
 beMultipliedByFraccion: aFraccionMultiplier
+	self subclassResponsibility.! !
 
-	^self subclassResponsibility.! !
-
-!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:45:56'!
+!Numero methodsFor: 'private' stamp: 'mg 5/31/2021 16:51:10'!
 beSubtractedByEntero: AnEnteroMinuend
+	self subclassResponsibility.! !
 
-	^ self subclassResponsibility .! !
-
-!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:55:54'!
+!Numero methodsFor: 'private' stamp: 'mg 5/31/2021 16:51:13'!
 beSubtractedByFraccion: aFraccionMinuend
+	self subclassResponsibility.! !
 
-	^self subclassResponsibility ! !
-
-!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:27:21'!
+!Numero methodsFor: 'private' stamp: 'mg 5/31/2021 16:51:16'!
 divideEntero: anEnteroDividend
-	^ self subclassResponsibility .! !
+	self subclassResponsibility.! !
 
-!Numero methodsFor: 'private' stamp: 'TP 5/29/2021 19:28:46'!
+!Numero methodsFor: 'private' stamp: 'mg 5/31/2021 16:51:19'!
 divideFraccion: aFraccionDividend
-
-	^ self subclassResponsibility.
-
-	! !
+ self subclassResponsibility.! !
 
 !Numero methodsFor: 'private' stamp: 'HernanWilkinson 5/7/2016 22:48'!
 invalidNumberType
 
 	self error: self class invalidNumberTypeErrorDescription! !
-
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -471,9 +464,9 @@ isZero
 	^ value = 0.! !
 
 
-!Entero methodsFor: 'arithmetic operations - private' stamp: 'TP 5/31/2021 12:08:24'!
+!Entero methodsFor: 'arithmetic operations - private' stamp: 'mg 5/31/2021 16:54:03'!
 // aDivisor
-	aDivisor = self value ifTrue: [ ^ self class with: 1 ]. 
+	"aDivisor = self value ifTrue: [ ^ self class with: 1 ]."
 	^ self class with: value // aDivisor integerValue.! !
 
 !Entero methodsFor: 'arithmetic operations - private' stamp: 'HernanWilkinson 5/7/2016 21:00'!
@@ -481,6 +474,12 @@ greatestCommonDivisorWith: anEntero
 	
 	^self class with: (value gcd: anEntero integerValue)! !
 
+
+!Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:42'!
+XXX
+
+
+	^ self subclassResponsibility .! !
 
 !Entero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:22:26'!
 beAddedToEntero: anEnteroAugend
@@ -547,18 +546,27 @@ returnNumeratorIfDenominatorIsOne: aNumerator
 Entero class
 	instanceVariableNames: 'aDivisor'!
 
+!Entero class methodsFor: 'instance creation' stamp: 'mg 5/31/2021 16:11:24'!
+checkThisValueCanBeOfClass: aValue
+	self subclassResponsibility.! !
+
 !Entero class methodsFor: 'instance creation' stamp: 'NR 4/8/2019 02:57:57'!
 negativeFibonacciErrorDescription
 	^ ' Fibonacci no está definido aquí para Enteros Negativos'! !
 
-!Entero class methodsFor: 'instance creation' stamp: 'TP 5/31/2021 11:10:57'!
+!Entero class methodsFor: 'instance creation' stamp: 'mg 5/31/2021 16:54:18'!
 with: aValue
 	"Esta verificacion esta puesta por si se equivocan y quieren crear un Entero pasando otra cosa que un Integer - Hernan"
+	| subclass |
 	aValue isInteger ifFalse: [ self error: 'aValue debe ser anInteger' ].
-	aValue isZero ifTrue: [ ^ Cero new initalizeWith: 0 ].
+	subclass _ Entero allSubclasses
+		detect: [ :class |
+			class checkThisValueCanBeOfClass: aValue ]
+		ifNone: [ self error: 'error' ].
+	^ subclass new initalizeWith: aValue"aValue isZero ifTrue: [ ^ Cero new initalizeWith: 0 ].
 	aValue = 1 ifTrue: [ ^ Uno new initalizeWith: 1 ].
-	aValue < 0 ifTrue: [^ Negativo new initalizeWith: aValue].
-	^ NoCero new initalizeWith: aValue.! !
+	aValue < 0 ifTrue: [ ^ Negativo new initalizeWith: aValue ].
+	^ NoCero new initalizeWith: aValue.".! !
 
 
 !classDefinition: #Cero category: 'Numeros-Parte2-Ejercicio'!
@@ -567,6 +575,10 @@ Entero subclass: #Cero
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
+
+!Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:14'!
+XXX
+	^ self value.! !
 
 !Cero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:47:24'!
 canThisNumberBeADivisor
@@ -595,6 +607,10 @@ returnADividendIfIsInCeroClass
 Cero class
 	instanceVariableNames: ''!
 
+!Cero class methodsFor: 'as yet unclassified' stamp: 'mg 5/31/2021 16:10:08'!
+checkThisValueCanBeOfClass: aValue
+	^ aValue = 0.! !
+
 !Cero class methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:53:28'!
 initializeInItsClass
 	^ self class new initializeWith: 0.! !
@@ -606,6 +622,11 @@ Entero subclass: #NoCero
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
+
+!NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:55:05'!
+XXX
+
+! !
 
 !NoCero methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 20:23:31'!
 canThisNumberBeADenominator
@@ -653,6 +674,10 @@ returnNumeratorIfDenominatorIsOne: aNumerator
 NoCero class
 	instanceVariableNames: ''!
 
+!NoCero class methodsFor: 'as yet unclassified' stamp: 'mg 5/31/2021 16:49:52'!
+checkThisValueCanBeOfClass: aValue
+	^ aValue ~= 1 and: aValue > 0.! !
+
 !NoCero class methodsFor: 'as yet unclassified' stamp: 'TP 5/30/2021 19:55:04'!
 initializeInItsClass
 	^ self class new initializeWith: self .! !
@@ -675,6 +700,21 @@ fibonacci
 
 ^self error: Entero negativeFibonacciErrorDescription.! !
 
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Negativo class' category: 'Numeros-Parte2-Ejercicio'!
+Negativo class
+	instanceVariableNames: ''!
+
+!Negativo class methodsFor: 'as yet unclassified' stamp: 'mg 5/31/2021 16:05:35'!
+initializeInItsClass
+	^ self class new initializeWith: self.! !
+
+
+!Negativo class methodsFor: 'nil' stamp: 'mg 5/31/2021 16:10:43'!
+checkThisValueCanBeOfClass: aValue
+	^ aValue < 0.! !
+
 
 !classDefinition: #Uno category: 'Numeros-Parte2-Ejercicio'!
 NoCero subclass: #Uno
@@ -694,6 +734,21 @@ fibonacci
 !Uno methodsFor: 'as yet unclassified' stamp: 'TP 5/31/2021 12:38:32'!
 returnNumeratorIfDenominatorIsOne: aNumerator
 	^ aNumerator .! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Uno class' category: 'Numeros-Parte2-Ejercicio'!
+Uno class
+	instanceVariableNames: ''!
+
+!Uno class methodsFor: 'as yet unclassified' stamp: 'mg 5/31/2021 16:06:02'!
+initializeInItsClass
+	^ self class new initializeWith: self.! !
+
+
+!Uno class methodsFor: 'nil' stamp: 'mg 5/31/2021 16:10:53'!
+checkThisValueCanBeOfClass: aValue
+	^ aValue = 1.! !
 
 
 !classDefinition: #Fraccion category: 'Numeros-Parte2-Ejercicio'!
