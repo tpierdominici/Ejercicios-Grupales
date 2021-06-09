@@ -139,10 +139,178 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #SentenceFinderByPrefixTest category: 'Stack-Exercise'!
 TestCase subclass: #SentenceFinderByPrefixTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'stackWithDifferentsSentences sentenceFinder sentenceOne sentenceTwo sentenceThree sentenceFour sentenceFive stackWithEqualsSentences emptyPrefix blankPrefix prefixWithNoResults'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefixTest methodsFor: 'helpers' stamp: 'TP 6/9/2021 19:29:43'!
+assertThat: anAction isAnErrorOfType: errorType 
+	
+	self 
+		should: anAction
+		raise: Error
+		withExceptionDo:[:anError | self assert: anError messageText equals: errorType].! !
+
+!SentenceFinderByPrefixTest methodsFor: 'helpers' stamp: 'TP 6/9/2021 19:42:06'!
+assertThatStackOrderDidntChange: anStack
+	
+	self assert: (sentenceFive =(anStack pop)).
+	self assert: (sentenceFour =(anStack pop)).
+	self assert: (sentenceThree =(anStack pop)).
+	self assert: (sentenceTwo = (anStack pop)).
+	self assert: (sentenceOne = (anStack pop)).
+	
+
+	! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:29:43'!
+test01PrefixCanNotBeVoid
+		
+	
+		self assertThat:[sentenceFinder find: emptyPrefix] isAnErrorOfType: SentenceFinderByPrefix prefixCanNotBeVoidErrorDescription.
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:29:43'!
+test02PrefixCanNotHaveBlanks
+	
+	
+		self assertThat:[sentenceFinder find: blankPrefix] isAnErrorOfType: SentenceFinderByPrefix prefixCanNotHaveBlankSpacesErrorDescription.
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:42:18'!
+test03APrefixThatWasntFoundInStackShouldNotChangeStackOrder
+	 
+	sentenceFinder find: prefixWithNoResults .
+	self assertThatStackOrderDidntChange: stackWithDifferentsSentences .
+	
+	
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:44:49'!
+test04APrefixThatWasFoundInStackShouldNotChangeStackOrder
+	|prefijo |
+	prefijo := 'Isla'.
+	sentenceFinder find: prefijo.
+	self assertThatStackOrderDidntChange: stackWithDifferentsSentences .
+	
+	
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:44:24'!
+test05APrefixThatWasntFoundResultInAnEmptyCollection
+	|elementsFinded|
+	elementsFinded :=sentenceFinder find: prefixWithNoResults .
+	self assert: (elementsFinded isEmpty).
+	
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:57:26'!
+test06FindeOnlySentenceWithUpperCasePrefix
+	|prefix elementsFinded expectedCollectionOfElements|
+	prefix :='Ver'.
+	expectedCollectionOfElements:= OrderedCollection with: sentenceFour with:sentenceOne.
+	elementsFinded :=sentenceFinder find: prefix.
+	self assert: expectedCollectionOfElements = elementsFinded .
+	
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:54:57'!
+test07FindeOnlySentenceWithLowerCasePrefix
+	|prefix elementsFinded expectedCollectionOfElements |
+	prefix :='ver'.
+	expectedCollectionOfElements:= OrderedCollection with: sentenceThree.
+	elementsFinded :=sentenceFinder find: prefix.
+	self assert: expectedCollectionOfElements = elementsFinded .
+	
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:55:19'!
+test08APrefixWithSomeEqualsLettersThatWasntFoundResultInAnEmptyCollection
+	|prefix elementsFinded|
+	prefix :='Veral'.
+	elementsFinded :=sentenceFinder find: prefix.
+	self assert: (elementsFinded isEmpty ).
+	
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 20:00:12'!
+test09APrefixThatWasFoundInAllSentencesOfStackResultInACollectionEqualToStack
+	|prefix elementsFinded expectedCollectionOfElements |
+	sentenceFinder _ SentenceFinderByPrefix new initializeWith: stackWithEqualsSentences.
+	prefix := 'Ver'.
+	expectedCollectionOfElements:= OrderedCollection with: sentenceOne with: sentenceOne with: sentenceOne.
+	elementsFinded:=sentenceFinder find: prefix.
+	
+	self assert: expectedCollectionOfElements = elementsFinded .
+	
+	
+	
+	
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 20:18:21'!
+test10CantInitializeSentenceFinderWithNonStack
+
+	| notStack |
+	notStack:= 'mountain'.
+	self assertThat:[SentenceFinderByPrefix new initializeWith: notStack] isAnErrorOfType: SentenceFinderByPrefix stackMustBeOOStackClass .! !
+
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 20:17:28'!
+test11PrefixShouldBeStringClass
+
+	| prefix |
+	prefix:= 4.
+	self assertThat:[sentenceFinder find: prefix] isAnErrorOfType: SentenceFinderByPrefix prefixMustBeStringClass .! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'setup' stamp: 'TP 6/9/2021 20:01:12'!
+setUp
+	stackWithDifferentsSentences _ OOStack new.
+	stackWithEqualsSentences _ OOStack new.
+	sentenceOne := 'Verano en la playa'.
+	sentenceTwo := 'Invierno en el sur'.
+	sentenceThree := 'verano en el mar'.
+	sentenceFour := 'Ver los pajaros'.
+	sentenceFive := 'Isla'.
+	stackWithDifferentsSentences push: sentenceOne.
+	stackWithDifferentsSentences push: sentenceTwo.
+	stackWithDifferentsSentences push: sentenceThree.
+	stackWithDifferentsSentences push: sentenceFour .
+	stackWithDifferentsSentences push: sentenceFive .
+	stackWithEqualsSentences push: sentenceOne.
+	stackWithEqualsSentences push: sentenceOne.
+	stackWithEqualsSentences push: sentenceOne.
+	sentenceFinder _ SentenceFinderByPrefix new initializeWith: stackWithDifferentsSentences.
+	emptyPrefix := ''.
+	blankPrefix := ' '.
+	prefixWithNoResults := 'tel'.
+	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SentenceFinderByPrefixTest class' category: 'Stack-Exercise'!
+SentenceFinderByPrefixTest class
+	instanceVariableNames: 'stack'!
 
 
 !classDefinition: #ElementsInStack category: 'Stack-Exercise'!
@@ -152,13 +320,14 @@ Object subclass: #ElementsInStack
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!ElementsInStack methodsFor: 'initialization' stamp: 'TP 6/8/2021 19:23:07'!
+initializeWith: something
+	 content _ something.! !
+
+
 !ElementsInStack methodsFor: 'as yet unclassified' stamp: 'TP 6/8/2021 19:38:29'!
 getContent
 	^ content.! !
-
-!ElementsInStack methodsFor: 'as yet unclassified' stamp: 'TP 6/8/2021 19:23:07'!
-initializeWith: something
-	 content _ something.! !
 
 !ElementsInStack methodsFor: 'as yet unclassified' stamp: 'TP 6/8/2021 19:25:47'!
 isEmpty
@@ -251,9 +420,85 @@ stackEmptyErrorDescription
 
 
 
-!classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
-Object subclass: #SentenceFinderByPrefix
-	instanceVariableNames: ''
+!classDefinition: #OOStackLimited category: 'Stack-Exercise'!
+OOStack subclass: #OOStackLimited
+	instanceVariableNames: 'maxCapacity'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!OOStackLimited methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:46:45'!
+initializeWithNumberOfElements: aPositveNumber
+	
+	elements := OrderedCollection new .
+	maxCapacity := aPositveNumber.
+	elements add: Base new.! !
+
+!OOStackLimited methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:47:12'!
+push: something
+	(self size = maxCapacity ) ifTrue:[^self error: self class canNotAddMoreElementsErrorDescription].
+	^ elements addLast: (ElementsInStack with: something).! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackLimited class' category: 'Stack-Exercise'!
+OOStackLimited class
+	instanceVariableNames: ''!
+
+!OOStackLimited class methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:47:45'!
+canNotAddMoreElementsErrorDescription
+
+	^'No se pueden agregar mas elementos pues el stack esta lleno'.! !
+
+
+!classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
+Object subclass: #SentenceFinderByPrefix
+	instanceVariableNames: 'stack'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefix methodsFor: 'initialization' stamp: 'TP 6/9/2021 20:08:34'!
+initializeWith: aStack
+	(aStack class=OOStack) ifFalse: [^ self error: self class stackMustBeOOStackClass]. 
+	 stack:= aStack.! !
+
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:09:35'!
+find: prefix
+	|collectionOfStackElements stackSize |
+	(prefix isString ) ifFalse:[^self error: SentenceFinderByPrefix prefixMustBeStringClass].
+	(prefix isEmpty) ifTrue:[^self error: SentenceFinderByPrefix prefixCanNotBeVoidErrorDescription ].
+	((prefix findString: ' ') >0) ifTrue:[^self error: SentenceFinderByPrefix prefixCanNotHaveBlankSpacesErrorDescription ]. 
+	stackSize := stack size.
+	collectionOfStackElements _ OrderedCollection new.
+	stackSize timesRepeat: [collectionOfStackElements add: (stack pop)].
+	stackSize to: 1 by: -1 do: [:position| stack push: (collectionOfStackElements at: position)]. 
+	^collectionOfStackElements select:[:sentence| sentence beginsWith: prefix].
+! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SentenceFinderByPrefix class' category: 'Stack-Exercise'!
+SentenceFinderByPrefix class
+	instanceVariableNames: ''!
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 15:27:24'!
+prefixCanNotBeVoidErrorDescription
+
+	^'El prefijo no puede ser vacio'.! !
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 15:30:04'!
+prefixCanNotHaveBlankSpacesErrorDescription
+
+	^ 'El prefijo no puede contener espacios'.! !
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:10:23'!
+prefixMustBeStringClass
+
+	^'El prefijo tiene que ser clase String'.! !
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:08:45'!
+stackMustBeOOStackClass
+	
+	^'SentenceFinderByPrefix tiene que recibir un stack como colaborador.'! !
