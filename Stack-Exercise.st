@@ -151,7 +151,7 @@ test11StackLimitedCanNotHaveMoreElementsThanItsCapacity
 
 !classDefinition: #SentenceFinderByPrefixTest category: 'Stack-Exercise'!
 TestCase subclass: #SentenceFinderByPrefixTest
-	instanceVariableNames: 'stackWithDifferentsSentences sentenceFinder sentenceOne sentenceTwo sentenceThree sentenceFour sentenceFive stackWithEqualsSentences emptyPrefix blankPrefix prefixWithNoResults'
+	instanceVariableNames: 'stackWithDifferentSentences sentenceFinder sentenceOne sentenceTwo sentenceThree sentenceFour sentenceFive stackWithEqualSentences emptyPrefix blankPrefix prefixWithNoResults'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
@@ -195,23 +195,23 @@ test02PrefixCanNotHaveBlanks
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:42:18'!
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'mg 6/10/2021 17:36:04'!
 test03APrefixThatWasntFoundInStackShouldNotChangeStackOrder
 	 
 	sentenceFinder find: prefixWithNoResults .
-	self assertThatStackOrderDidntChange: stackWithDifferentsSentences .
+	self assertThatStackOrderDidntChange: stackWithDifferentSentences .
 	
 	
 	
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:44:49'!
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'mg 6/10/2021 17:36:04'!
 test04APrefixThatWasFoundInStackShouldNotChangeStackOrder
 	|prefijo |
 	prefijo := 'Isla'.
 	sentenceFinder find: prefijo.
-	self assertThatStackOrderDidntChange: stackWithDifferentsSentences .
+	self assertThatStackOrderDidntChange: stackWithDifferentSentences .
 	
 	
 	
@@ -228,8 +228,8 @@ test05APrefixThatWasntFoundResultInAnEmptyCollection
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:57:26'!
-test06FindeOnlySentenceWithUpperCasePrefix
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'mg 6/10/2021 17:34:25'!
+test06FindOnlySentencesWithUpperCasePrefix
 	|prefix elementsFinded expectedCollectionOfElements|
 	prefix :='Ver'.
 	expectedCollectionOfElements:= OrderedCollection with: sentenceFour with:sentenceOne.
@@ -240,8 +240,8 @@ test06FindeOnlySentenceWithUpperCasePrefix
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 19:54:57'!
-test07FindeOnlySentenceWithLowerCasePrefix
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'mg 6/10/2021 17:34:43'!
+test07FindOnlySentencesWithLowerCasePrefix
 	|prefix elementsFinded expectedCollectionOfElements |
 	prefix :='ver'.
 	expectedCollectionOfElements:= OrderedCollection with: sentenceThree.
@@ -263,10 +263,10 @@ test08APrefixWithSomeEqualsLettersThatWasntFoundResultInAnEmptyCollection
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 20:00:12'!
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'mg 6/10/2021 17:35:47'!
 test09APrefixThatWasFoundInAllSentencesOfStackResultInACollectionEqualToStack
 	|prefix elementsFinded expectedCollectionOfElements |
-	sentenceFinder _ SentenceFinderByPrefix new initializeWith: stackWithEqualsSentences.
+	sentenceFinder _ SentenceFinderByPrefix new initializeWith: stackWithEqualSentences.
 	prefix := 'Ver'.
 	expectedCollectionOfElements:= OrderedCollection with: sentenceOne with: sentenceOne with: sentenceOne.
 	elementsFinded:=sentenceFinder find: prefix.
@@ -280,8 +280,8 @@ test09APrefixThatWasFoundInAllSentencesOfStackResultInACollectionEqualToStack
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'TP 6/9/2021 20:18:21'!
-test10CantInitializeSentenceFinderWithNonStack
+!SentenceFinderByPrefixTest methodsFor: 'tests' stamp: 'mg 6/10/2021 17:35:19'!
+test10CanNotInitializeSentenceFinderWithNonStack
 
 	| notStack |
 	notStack:= 'mountain'.
@@ -295,24 +295,24 @@ test11PrefixShouldBeStringClass
 	self assertThat:[sentenceFinder find: prefix] isAnErrorOfType: SentenceFinderByPrefix prefixMustBeStringClass .! !
 
 
-!SentenceFinderByPrefixTest methodsFor: 'setup' stamp: 'TP 6/9/2021 20:01:12'!
+!SentenceFinderByPrefixTest methodsFor: 'setup' stamp: 'mg 6/10/2021 17:36:04'!
 setUp
-	stackWithDifferentsSentences _ OOStack new.
-	stackWithEqualsSentences _ OOStack new.
+	stackWithDifferentSentences _ OOStack new.
+	stackWithEqualSentences _ OOStack new.
 	sentenceOne := 'Verano en la playa'.
 	sentenceTwo := 'Invierno en el sur'.
 	sentenceThree := 'verano en el mar'.
 	sentenceFour := 'Ver los pajaros'.
 	sentenceFive := 'Isla'.
-	stackWithDifferentsSentences push: sentenceOne.
-	stackWithDifferentsSentences push: sentenceTwo.
-	stackWithDifferentsSentences push: sentenceThree.
-	stackWithDifferentsSentences push: sentenceFour .
-	stackWithDifferentsSentences push: sentenceFive .
-	stackWithEqualsSentences push: sentenceOne.
-	stackWithEqualsSentences push: sentenceOne.
-	stackWithEqualsSentences push: sentenceOne.
-	sentenceFinder _ SentenceFinderByPrefix new initializeWith: stackWithDifferentsSentences.
+	stackWithDifferentSentences push: sentenceOne.
+	stackWithDifferentSentences push: sentenceTwo.
+	stackWithDifferentSentences push: sentenceThree.
+	stackWithDifferentSentences push: sentenceFour .
+	stackWithDifferentSentences push: sentenceFive .
+	stackWithEqualSentences push: sentenceOne.
+	stackWithEqualSentences push: sentenceOne.
+	stackWithEqualSentences push: sentenceOne.
+	sentenceFinder _ SentenceFinderByPrefix new initializeWith: stackWithDifferentSentences.
 	emptyPrefix := ''.
 	blankPrefix := ' '.
 	prefixWithNoResults := 'tel'.
@@ -332,11 +332,6 @@ Object subclass: #ElementsInStack
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!ElementsInStack methodsFor: 'initialization' stamp: 'TP 6/8/2021 19:23:07'!
-initializeWith: something
-	 content _ something.! !
-
-
 !ElementsInStack methodsFor: 'as yet unclassified' stamp: 'TP 6/8/2021 19:38:29'!
 getContent
 	^ content.! !
@@ -350,6 +345,11 @@ isEmpty
 removeFrom: collection
 	collection remove: self.
 	^content.! !
+
+
+!ElementsInStack methodsFor: 'initialization' stamp: 'TP 6/8/2021 19:23:07'!
+initializeWith: something
+	 content _ something.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -430,7 +430,6 @@ stackEmptyErrorDescription
 	
 	^ 'Stack is empty'! !
 
-
 
 !classDefinition: #OOStackLimited category: 'Stack-Exercise'!
 OOStack subclass: #OOStackLimited
@@ -439,11 +438,10 @@ OOStack subclass: #OOStackLimited
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStackLimited methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:46:45'!
-initializeWithNumberOfElements: aPositveNumber
-	
-	elements := OrderedCollection new .
-	maxCapacity := aPositveNumber.
+!OOStackLimited methodsFor: 'as yet unclassified' stamp: 'mg 6/10/2021 17:40:54'!
+initializeWithNumberOfElements: aPositiveNumber
+	elements _ OrderedCollection new.
+	maxCapacity _ aPositiveNumber.
 	elements add: Base new.! !
 
 !OOStackLimited methodsFor: 'as yet unclassified' stamp: 'TP 6/10/2021 17:21:18'!
