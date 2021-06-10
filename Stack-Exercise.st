@@ -136,6 +136,18 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 		
 ! !
 
+!OOStackTest methodsFor: 'test' stamp: 'TP 6/10/2021 17:18:41'!
+test11StackLimitedCanNotHaveMoreElementsThanItsCapacity
+	| stackLimited |
+	stackLimited _ OOStackLimited new initializeWithNumberOfElements: 2.
+	stackLimited push: 'Primera oracion'.
+	stackLimited push: 'Segunda oracion'.
+	self
+		should: [ stackLimited push: 'Tercer oracion' ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = OOStackLimited canNotAddMoreElementsErrorDescription ].! !
+
 
 !classDefinition: #SentenceFinderByPrefixTest category: 'Stack-Exercise'!
 TestCase subclass: #SentenceFinderByPrefixTest
@@ -434,10 +446,11 @@ initializeWithNumberOfElements: aPositveNumber
 	maxCapacity := aPositveNumber.
 	elements add: Base new.! !
 
-!OOStackLimited methodsFor: 'as yet unclassified' stamp: 'TP 6/9/2021 20:47:12'!
+!OOStackLimited methodsFor: 'as yet unclassified' stamp: 'TP 6/10/2021 17:21:18'!
 push: something
-	(self size = maxCapacity ) ifTrue:[^self error: self class canNotAddMoreElementsErrorDescription].
-	^ elements addLast: (ElementsInStack with: something).! !
+	self size = maxCapacity ifTrue: [ ^ self error: self class canNotAddMoreElementsErrorDescription ].
+	^ elements addLast: (ElementsInStack with: something).
+	"^ super push: something - Se nos ocurrio hacerlo de esta manera pero no estabamos seguros de como funciona super."! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
