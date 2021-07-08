@@ -76,7 +76,7 @@ test08BalanceOfPortfolioThatHasOnlyAnEmptyPortfolioIsZero
 	portfolio add: otherPortfolio.
 	self assert: portfolio balance isZero.! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/7/2021 20:00:26'!
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 17:12:45'!
 test09PortfolioCanNotMakeTransactions
 	self
 		should: [
@@ -87,7 +87,7 @@ test09PortfolioCanNotMakeTransactions
 		withExceptionDo: [ :anError |
 			self
 				assert: anError messageText
-				equals: Portfolio PortfolioCannotRegisterATransactionErrorDescription ].! !
+				equals: Portfolio portfolioCannotRegisterATransactionErrorDescription ].! !
 
 !PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/7/2021 20:03:29'!
 test10BalanceOfPortfolioWithANonEmptyPortfolioIsTheSumOfAccountsBalancesInTheContainedPortfolio
@@ -132,6 +132,63 @@ test12PortfolioKnowsTransactionsOfItsNonEmptyPortfolio
 	self
 		assert: 2
 		equals: (portfolio seeTransactionsOf: otherPortfolio ) size.! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:17:33'!
+test13PortfolioCanNotHaveTwoAccountsEqualsErrorDescription
+	portfolio add: anAccount.
+	self
+		should: [ portfolio add: anAccount ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self
+				assert: anError messageText
+				equals: Portfolio portfolioCanNotHaveTwoAccountsEqualsErrorDescription ].! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:19:44'!
+test14PortfolioCanNotAddAnAccountAlreadyAddedInAnIncludedPortfolio
+	portfolio add: otherPortfolio.
+	otherPortfolio add: anAccount.
+	self
+		should: [ portfolio add: anAccount ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self
+				assert: anError messageText
+				equals: Portfolio portfolioCanNotHaveTwoAccountsEqualsErrorDescription ].! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:22:49'!
+test15PortfolioShouldNotAddItSelf
+	self
+		should: [ portfolio add: portfolio ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self
+				assert: anError messageText
+				equals: Portfolio portfolioCanNotAddItselfErrorDescription ].! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:40:30'!
+test16PortfolioCanNotAddAnAccountThatPortfolioFatherHas
+	portfolio add: anAccount.
+	portfolio add: otherPortfolio.
+	self
+		should: [ otherPortfolio add: anAccount ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self
+				assert: anError messageText
+				equals: Portfolio portfolioCanNotHaveTwoAccountsEqualsErrorDescription ].! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:53:39'!
+test17PortfolioCanNotAddAPortfolioWithAnAccountAlreadyIncludedInFirstPortfolio
+	portfolio add: anAccount.
+	otherPortfolio add: anAccount.
+	self
+		should: [ portfolio add: otherPortfolio ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self
+				assert: anError messageText
+				equals: Portfolio portfolioCanNotHaveTwoAccountsEqualsErrorDescription ].! !
 
 
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Ejercicio'!
@@ -403,17 +460,43 @@ register: aTransaction
 transactions
 	self subclassResponsibility.! !
 
+
+!FinancialContract methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:33:25'!
+beAddedTo: aCollectionOfFinancialContracts withFather: fatherPortfolio
+	
+	self subclassResponsibility .! !
+
+!FinancialContract methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:44:28'!
+checkIfThisFinancialContractCanNotBeAdded: aFinancialContract
+
+	self subclassResponsibility .! !
+
+!FinancialContract methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:51:37'!
+haveAnyFinancialContractInCommonWith: aCollecionOfFinancialContracts
+
+	self subclassResponsibility .! !
+
 
 !classDefinition: #Portfolio category: 'ServiciosFinancieros-Ejercicio'!
 FinancialContract subclass: #Portfolio
-	instanceVariableNames: 'financialContracts'
+	instanceVariableNames: 'financialContracts father'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Portfolio methodsFor: 'main protocol' stamp: 'mg 7/7/2021 15:53:07'!
+!Portfolio methodsFor: 'main protocol' stamp: 'TP 7/8/2021 18:49:25'!
 add: aFinancialContract
-	financialContracts addFirst: aFinancialContract.! !
+	| thisCanNotBeAdded |
+	aFinancialContract haveAnyFinancialContractInCommonWith: financialContracts .
+	self = aFinancialContract ifTrue: [ self error: self class portfolioCanNotAddItselfErrorDescription ].
+	thisCanNotBeAdded _ father checkIfThisFinancialContractCanNotBeAdded: aFinancialContract.
+	thisCanNotBeAdded ifFalse: [ ^ aFinancialContract
+			beAddedTo: financialContracts
+			withFather: self ].
+	aFinancialContract
+		beAddedTo: financialContracts
+		withFather: self.
+	^ self error: Portfolio portfolioCanNotHaveTwoAccountsEqualsErrorDescription.! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'mg 7/7/2021 15:53:29'!
 balance
@@ -423,9 +506,9 @@ balance
 		into: [ :currentBalance :aFinancialContract |
 			aFinancialContract effectOnPortfolio: currentBalance ].! !
 
-!Portfolio methodsFor: 'main protocol' stamp: 'mg 7/7/2021 15:02:26'!
+!Portfolio methodsFor: 'main protocol' stamp: 'TP 7/8/2021 17:12:45'!
 register: aTransaction
-	^ self error: self class PortfolioCannotRegisterATransactionErrorDescription.! !
+	^ self error: self class portfolioCannotRegisterATransactionErrorDescription.! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'mg 7/7/2021 15:52:20'!
 seeTransactionsOf: aFinancialContract
@@ -444,9 +527,38 @@ transactions
 	^ transactions.! !
 
 
-!Portfolio methodsFor: 'initialization' stamp: 'mg 7/7/2021 15:52:20'!
+!Portfolio methodsFor: 'initialization' stamp: 'TP 7/8/2021 18:35:02'!
 initialize
-	financialContracts _ OrderedCollection new.! !
+	financialContracts _ OrderedCollection new.
+	father:= self.! !
+
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:32:35'!
+beAddedTo: aCollectionOfFinancialContracts withFather: fatherPortfolio
+	father _ fatherPortfolio.
+	aCollectionOfFinancialContracts addFirst: self.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:44:29'!
+checkIfThisFinancialContractCanNotBeAdded: aFinancialContract
+	 financialContracts
+		detect: [ :anIncludedFinancialContract |
+			anIncludedFinancialContract checkIfThisFinancialContractCanNotBeAdded: aFinancialContract ]
+		ifNone: [ ^ false ].
+		^true.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:50:42'!
+haveAnyFinancialContractInCommonWith: aCollecionOfFinancialContracts
+	
+	(aCollecionOfFinancialContracts includesAnyOf: financialContracts) ifTrue: [^self error: self class portfolioCanNotHaveTwoAccountsEqualsErrorDescription ].! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 17:36:09'!
+thisCollection: collectionOfFinancialContracts has: aFinancialContract
+
+	"1 to: financialContracts size do: [:index| 
+		(financialContracts at: index) XXX: aFinancialContract
+		]."
+	
+	collectionOfFinancialContracts detect: [:variable| variable XXX: aFinancialContract ].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -454,9 +566,19 @@ initialize
 Portfolio class
 	instanceVariableNames: ''!
 
-!Portfolio class methodsFor: 'as yet unclassified' stamp: 'mg 7/7/2021 15:02:48'!
-PortfolioCannotRegisterATransactionErrorDescription
-	^ 'error'.! !
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:20:39'!
+portfolioCanNotAddItselfErrorDescription
+
+	^'No se puede añadir a si mismo'.! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 17:12:27'!
+portfolioCanNotHaveTwoAccountsEqualsErrorDescription
+
+	^'Un portafolio no puede tener cuentas iguales.'! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 17:13:09'!
+portfolioCannotRegisterATransactionErrorDescription
+	^ 'Un portafolio no puede registrar una transaccion'.! !
 
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
@@ -495,6 +617,20 @@ register: aTransaction
 transactions 
 
 	^ transactions copy! !
+
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:33:09'!
+beAddedTo: aCollectionOfFinancialContracts withFather: fatherPortfolio
+	aCollectionOfFinancialContracts addFirst: self.! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:44:28'!
+checkIfThisFinancialContractCanNotBeAdded: aFinancialContract
+	^ self = aFinancialContract.! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'TP 7/8/2021 18:51:27'!
+haveAnyFinancialContractInCommonWith: aCollecionOfFinancialContracts
+
+	! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
