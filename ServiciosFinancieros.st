@@ -306,106 +306,112 @@ test07AccountKnowsItsTransactions
 
 !classDefinition: #ReportTest category: 'ServiciosFinancieros'!
 TestCase subclass: #ReportTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'accountSummary transferNet'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros'!
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:43:05'!
-test01
-	| account1 expectedReport report |
-	account1 := ReceptiveAccount new.
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:55:23'!
+setUp
+	accountSummary := AccountSummaryReport new.
+	transferNet := TransferNetReport new.! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:03:06'!
+test01AccountSummaryReportOfAnAccountWithNoTransactionsIsCorrect
+	| account expectedReport report |
+	account := ReceptiveAccount new.
 	expectedReport := OrderedCollection with:'Balance = 0 pesos'.
-	report := account1 accountSummary.
+	
+	report := account generateReportOf:accountSummary.
 	AccountSummaryToReport new createReportInterface:report.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:18:36'!
-test02
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:04:24'!
+test02AccountSummaryReportOfAnAccountWithOneDepositIsCorrect
 	| account expectedReport report |
 	account := ReceptiveAccount new.
 	Deposit register: 100 * peso on: account.
 	
 	expectedReport := OrderedCollection with:'Depósito por 100 pesos' with:'Balance = 100 pesos'.
-	report := account accountSummary.
+	report := account generateReportOf:accountSummary.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:30:25'!
-test03
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:04:48'!
+test03AccountSummaryReportOfAnAccountWithOneWithdrawIsCorrect
 	| account expectedReport report |
 	account := ReceptiveAccount new.
 	Withdraw register: 100 * peso on: account.
 	
 	expectedReport := OrderedCollection with:'Extracción por 100 pesos' with:'Balance = -100 pesos'.
-	report := account accountSummary.
+	report := account generateReportOf:accountSummary.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:35:46'!
-test04
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:09:04'!
+test04AccountSummaryReportOfAnAccountWithOneInboundTransferIsCorrect
 	| account expectedReport report account2 |
 	account := ReceptiveAccount new.
 	account2 := ReceptiveAccount new.
 	Transfer amount:100 * peso  from:account2  to:account. 
 	
 	expectedReport := OrderedCollection with:'Entrada por transferencia de 100 pesos' with:'Balance = 100 pesos'.
-	report := account accountSummary.
+	report := account generateReportOf:accountSummary.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:40:35'!
-test05
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:08:07'!
+test05AccountSummaryReportOfAnAccountWithOneOutboundTransferIsCorrect
 	| account expectedReport report account2 |
 	account := ReceptiveAccount new.
 	account2 := ReceptiveAccount new.
 	Transfer amount:100 * peso  from:account  to:account2. 
 	
 	expectedReport := OrderedCollection with:'Salida por transferencia de 100 pesos' with:'Balance = -100 pesos'.
-	report := account accountSummary.
+	report := account generateReportOf:accountSummary.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 18:13:54'!
-test06
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:09:32'!
+test06AccountSummaryReportOfAnAccountWithTwoTransactionsIsCorrect
 	| account expectedReport report |
 	account := ReceptiveAccount new.
 	Deposit register: 100 * peso on: account.
 	Withdraw register: 50 * peso on: account.
 	
 	expectedReport := OrderedCollection with:'Depósito por 100 pesos' with:'Extracción por 50 pesos' with:'Balance = 50 pesos'.
-	report := account accountSummary.
+	report := account generateReportOf:accountSummary.
 	AccountSummaryToReport new createReportInterface:report.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:11:29'!
-test07
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:10:13'!
+test07TransferNetReportOfAnAccountWithNoTransactionsIsCorrect
 	| account expectedReport report |
 	account := ReceptiveAccount new.
 		
 	expectedReport := '0 pesos'.
-	report := account transferNet.
+	report := account generateReportOf:transferNet.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:13:29'!
-test08
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:10:49'!
+test08TransferNetReportOfAnAccountWithOneInboundTransferIsCorrect
 	| account expectedReport report account2 |
 	account := ReceptiveAccount new.
 	account2 := ReceptiveAccount new.
 	Transfer amount:100 * peso  from:account2 to:account. 
 	
 	expectedReport := '100 pesos'.
-	report := account transferNet.
+	report := account generateReportOf:transferNet.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:15:50'!
-test09
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:11:22'!
+test09TransferNetReportOfAnAccountWithNoTransfersIsCorrect
 	| account expectedReport report |
 	account := ReceptiveAccount new.
 	Deposit register: 30 * peso on:account. 
 	
 	expectedReport := '0 pesos'.
-	report := account transferNet.
+	report := account generateReportOf:transferNet.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:22:21'!
-test10
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:11:51'!
+test10TransferNetReportOfAnAccountWithManyTransactionsIsCorrect
 	| account expectedReport report account2 |
 	account := ReceptiveAccount new.
 	account2 := ReceptiveAccount new.
@@ -413,22 +419,7 @@ test10
 	Deposit register: 30 * peso on:account. 
 	
 	expectedReport := '100 pesos'.
-	report := account transferNet.
-	self assert: expectedReport equals: report.! !
-
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:30:54'!
-test11
-	| account expectedReport report account2 portfolio portfolio2 |
-	account := ReceptiveAccount new.
-	account2 := ReceptiveAccount new.
-	portfolio := Portfolio with:account.
-	portfolio2 := Portfolio with:account2.
-	portfolio add:portfolio2.
-	Transfer amount:100 * peso  from:account2 to:account. 
-	Deposit register: 30 * peso on:account. 
-	
-	expectedReport := '0 pesos'.
-	report := portfolio transferNet.
+	report := account generateReportOf:transferNet.
 	self assert: expectedReport equals: report.! !
 
 
@@ -576,21 +567,16 @@ addTransactionsTo: aCollectionOfTransactions
 	self subclassResponsibility ! !
 
 
-!Account methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:42:20'!
-accountSummary
-	| summary |
-	summary := OrderedCollection new.
-	self transactions do:[ :transaction | summary add:transaction asDrawableLikeReport ].
-	summary add:('Balance = ', self balance printString).
-	^summary.! !
+!Account methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:17:16'!
+generateReportOf:aReportType
+	^aReportType generateFor:self.! !
 
-!Account methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 17:28:20'!
+!Account methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:50:49'!
 transferNet
-	| transfers |
-	transfers := self transactions select: [ :aTransaction | aTransaction isKindOf: TransferLeg ].
-	^(transfers 
+	
+	^(self transactions 
 		inject: 0 * peso
-		into: [ :currentBalance :transaction | transaction affectBalance: currentBalance ]) printString.! !
+		into: [ :currentBalance :transaction | transaction sumTransferValueTo: currentBalance ]) printString.! !
 
 
 !classDefinition: #Portfolio category: 'ServiciosFinancieros'!
@@ -822,6 +808,11 @@ affectBalance: aBalance
 asDrawableLikeReport
 	self subclassResponsibility.! !
 
+!AccountTransaction methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:48:28'!
+sumTransferValueTo:aBalance
+
+	self subclassResponsibility.! !
+
 
 !classDefinition: #Deposit category: 'ServiciosFinancieros'!
 AccountTransaction subclass: #Deposit
@@ -851,6 +842,10 @@ affectBalance: aBalance
 !Deposit methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:48:20'!
 asDrawableLikeReport
 	^'Depósito por ', self value printString.! !
+
+!Deposit methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:48:53'!
+sumTransferValueTo:aBalance
+	^aBalance.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -938,6 +933,10 @@ affectBalance: aBalance
 asDrawableLikeReport
 	^'Entrada por transferencia de ', self value printString.! !
 
+!TransferDepositLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:49:48'!
+sumTransferValueTo:aBalance
+	^aBalance + self value.! !
+
 
 !classDefinition: #TransferWithdrawLeg category: 'ServiciosFinancieros'!
 TransferLeg subclass: #TransferWithdrawLeg
@@ -961,6 +960,10 @@ affectBalance: aBalance
 !TransferWithdrawLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:49:44'!
 asDrawableLikeReport
 	^'Salida por transferencia de ', self value printString.! !
+
+!TransferWithdrawLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:50:01'!
+sumTransferValueTo:aBalance
+	^aBalance - self value.! !
 
 
 !classDefinition: #Withdraw category: 'ServiciosFinancieros'!
@@ -992,6 +995,10 @@ affectBalance: aBalance
 asDrawableLikeReport
 	^'Extracción por ', self value printString.! !
 
+!Withdraw methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:49:28'!
+sumTransferValueTo:aBalance
+	^aBalance.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Withdraw class' category: 'ServiciosFinancieros'!
@@ -1013,6 +1020,49 @@ register: aValue on: account
 	account register: transaction.
 		
 	^ transaction! !
+
+
+!classDefinition: #ReportType category: 'ServiciosFinancieros'!
+Object subclass: #ReportType
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
+
+!ReportType methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:17:16'!
+generateFor:anAccount
+	self subclassResponsibility.! !
+
+
+!classDefinition: #AccountSummaryReport category: 'ServiciosFinancieros'!
+ReportType subclass: #AccountSummaryReport
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
+
+!AccountSummaryReport methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:17:16'!
+generateFor:anAccount
+	| summary |
+	summary := OrderedCollection new.
+	anAccount transactions do:[ :transaction | summary add:transaction asDrawableLikeReport ].
+	summary add:('Balance = ', anAccount balance printString).
+	^summary.! !
+
+
+!classDefinition: #TransferNetReport category: 'ServiciosFinancieros'!
+ReportType subclass: #TransferNetReport
+	instanceVariableNames: 'account'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
+
+!TransferNetReport methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:17:16'!
+generateFor:anAccount
+
+	^(anAccount transactions 
+		inject: 0 * peso
+		into: [ :currentBalance :transaction | transaction sumTransferValueTo: currentBalance ]) printString.! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros'!
@@ -1106,3 +1156,11 @@ amount: anAmountOfMoney from: originAccount to: destinationAccount
 	
 	
 	! !
+
+
+!classDefinition: #XXX category: 'ServiciosFinancieros'!
+Object subclass: #XXX
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
