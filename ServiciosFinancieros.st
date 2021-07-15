@@ -306,35 +306,58 @@ test07AccountKnowsItsTransactions
 
 !classDefinition: #ReportTest category: 'ServiciosFinancieros'!
 TestCase subclass: #ReportTest
-	instanceVariableNames: 'accountSummary transferNet'
+	instanceVariableNames: 'accountSummary transferNet dictionary'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros'!
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:55:23'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:28:12'!
 setUp
-	accountSummary := AccountSummaryReport new.
-	transferNet := TransferNetReport new.! !
+	accountSummary _ AccountSummaryReport new.
+	transferNet _ TransferNetReport new.
+	dictionary _ Dictionary new.
+	dictionary add:
+		(Association
+			key: #asDrawableLikeADeposit
+			value: [ 'Depósito por ' ]).
+	dictionary add:
+		(Association
+			key: #asDrawableLikeAWithdraw
+			value: [ 'Extracción por ' ]).
+	dictionary add:
+		(Association
+			key: #asDrawableLikeAInboundTransfer
+			value: [ 'Entrada por transferencia de ' ]).
+	dictionary add:
+		(Association
+			key: #asDrawableLikeAOutboundTransfer
+			value: [ 'Salida por transferencia de ' ]).! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:03:06'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 08:58:10'!
 test01AccountSummaryReportOfAnAccountWithNoTransactionsIsCorrect
 	| account expectedReport report |
-	account := ReceptiveAccount new.
-	expectedReport := OrderedCollection with:'Balance = 0 pesos'.
-	
-	report := account generateReportOf:accountSummary.
-	AccountSummaryToReport new createReportInterface:report.
-	self assert: expectedReport equals: report.! !
+	account _ ReceptiveAccount new.
+	expectedReport _ OrderedCollection with: 'Balance = 0 pesos'.
+	report _ account generateReportOf: accountSummary .
+	AccountSummaryToReport new createReportInterface: report.
+	self
+		assert: expectedReport
+		equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:04:24'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:45:46'!
 test02AccountSummaryReportOfAnAccountWithOneDepositIsCorrect
 	| account expectedReport report |
-	account := ReceptiveAccount new.
-	Deposit register: 100 * peso on: account.
-	
-	expectedReport := OrderedCollection with:'Depósito por 100 pesos' with:'Balance = 100 pesos'.
-	report := account generateReportOf:accountSummary.
-	self assert: expectedReport equals: report.! !
+	account _ ReceptiveAccount new.
+	Deposit
+		register: 100 * peso
+		on: account.
+	expectedReport _ OrderedCollection
+		with: 'Depósito por 100 pesos'
+		with: 'Balance = 100 pesos'.
+	report _ account generateReportOf: (AccountSummaryReport for: (ReportAdapter for: dictionary)).
+	self
+		assert: expectedReport
+		equals: report.! !
 
 !ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:04:48'!
 test03AccountSummaryReportOfAnAccountWithOneWithdrawIsCorrect
@@ -843,6 +866,13 @@ affectBalance: aBalance
 asDrawableLikeReport
 	^'Depósito por ', self value printString.! !
 
+!Deposit methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:57:01'!
+asDrawableLikeReport: aModel
+	"^ 'Depósito por ' , self value printString."
+	^aModel
+		procesar: [ aModel asDrawableLikeADeposit ]
+		y: self value.! !
+
 !Deposit methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:48:53'!
 sumTransferValueTo:aBalance
 	^aBalance.! !
@@ -1022,6 +1052,42 @@ register: aValue on: account
 	^ transaction! !
 
 
+!classDefinition: #ReportAdapter category: 'ServiciosFinancieros'!
+Object subclass: #ReportAdapter
+	instanceVariableNames: 'dictionary'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
+
+!ReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:14:43'!
+doesNotUnderstand: aMessage
+	(dictionary includesKey: aMessage selector) ifTrue: [ ^ (dictionary at: aMessage selector) value].
+	^ super doesNotUnderstand: aMessage.! !
+
+!ReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:30:35'!
+initializeWith: aDictionary
+	dictionary:= aDictionary .! !
+
+!ReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:52:22'!
+procesar: aMessage y: aValue
+	" aMessage."
+	| string |
+	string _ (aMessage value).
+	^ string , aValue printString.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ReportAdapter class' category: 'ServiciosFinancieros'!
+ReportAdapter class
+	instanceVariableNames: ''!
+
+!ReportAdapter class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:30:06'!
+for: aDictionary
+	^ self new
+		initializeWith: aDictionary .
+! !
+
+
 !classDefinition: #ReportType category: 'ServiciosFinancieros'!
 Object subclass: #ReportType
 	instanceVariableNames: ''
@@ -1036,18 +1102,35 @@ generateFor:anAccount
 
 !classDefinition: #AccountSummaryReport category: 'ServiciosFinancieros'!
 ReportType subclass: #AccountSummaryReport
-	instanceVariableNames: ''
+	instanceVariableNames: 'model'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros'!
 
-!AccountSummaryReport methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:17:16'!
-generateFor:anAccount
+!AccountSummaryReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:44:25'!
+generateFor: anAccount
 	| summary |
-	summary := OrderedCollection new.
-	anAccount transactions do:[ :transaction | summary add:transaction asDrawableLikeReport ].
-	summary add:('Balance = ', anAccount balance printString).
-	^summary.! !
+	summary _ OrderedCollection new.
+	anAccount transactions do: [ :transaction |
+		summary add: (transaction asDrawableLikeReport: model) ].
+	summary add: 'Balance = ' , anAccount balance printString.
+	^ summary.! !
+
+!AccountSummaryReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:44:41'!
+initializeWith: aAdapter
+
+	model:= aAdapter.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountSummaryReport class' category: 'ServiciosFinancieros'!
+AccountSummaryReport class
+	instanceVariableNames: ''!
+
+!AccountSummaryReport class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:44:14'!
+for: aAdapter
+
+	^self new initializeWith: aAdapter! !
 
 
 !classDefinition: #TransferNetReport category: 'ServiciosFinancieros'!
@@ -1156,11 +1239,3 @@ amount: anAmountOfMoney from: originAccount to: destinationAccount
 	
 	
 	! !
-
-
-!classDefinition: #XXX category: 'ServiciosFinancieros'!
-Object subclass: #XXX
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ServiciosFinancieros'!
