@@ -311,9 +311,8 @@ TestCase subclass: #ReportTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros'!
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:28:12'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 11:47:46'!
 setUp
-	accountSummary _ AccountSummaryReport new.
 	transferNet _ TransferNetReport new.
 	dictionary _ Dictionary new.
 	dictionary add:
@@ -326,25 +325,28 @@ setUp
 			value: [ 'Extracción por ' ]).
 	dictionary add:
 		(Association
-			key: #asDrawableLikeAInboundTransfer
+			key: #asDrawableLikeAnInboundTransfer
 			value: [ 'Entrada por transferencia de ' ]).
 	dictionary add:
 		(Association
-			key: #asDrawableLikeAOutboundTransfer
-			value: [ 'Salida por transferencia de ' ]).! !
+			key: #asDrawableLikeAnOutboundTransfer
+			value: [ 'Salida por transferencia de ' ]).
+	accountSummary _ AccountSummaryReport for: (AccountSummaryReportAdapter for: dictionary).! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 08:58:10'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:27:28'!
 test01AccountSummaryReportOfAnAccountWithNoTransactionsIsCorrect
 	| account expectedReport report |
 	account _ ReceptiveAccount new.
 	expectedReport _ OrderedCollection with: 'Balance = 0 pesos'.
-	report _ account generateReportOf: accountSummary .
+	report _ account generateReportOf: accountSummary.
+	
+	"De esta manera se crea un archivo txt del reporte"
 	AccountSummaryToReport new createReportInterface: report.
 	self
 		assert: expectedReport
 		equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:45:46'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 11:44:30'!
 test02AccountSummaryReportOfAnAccountWithOneDepositIsCorrect
 	| account expectedReport report |
 	account _ ReceptiveAccount new.
@@ -354,7 +356,7 @@ test02AccountSummaryReportOfAnAccountWithOneDepositIsCorrect
 	expectedReport _ OrderedCollection
 		with: 'Depósito por 100 pesos'
 		with: 'Balance = 100 pesos'.
-	report _ account generateReportOf: (AccountSummaryReport for: (ReportAdapter for: dictionary)).
+	report _ account generateReportOf: accountSummary .
 	self
 		assert: expectedReport
 		equals: report.! !
@@ -391,17 +393,24 @@ test05AccountSummaryReportOfAnAccountWithOneOutboundTransferIsCorrect
 	report := account generateReportOf:accountSummary.
 	self assert: expectedReport equals: report.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:09:32'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:26:50'!
 test06AccountSummaryReportOfAnAccountWithTwoTransactionsIsCorrect
 	| account expectedReport report |
-	account := ReceptiveAccount new.
-	Deposit register: 100 * peso on: account.
-	Withdraw register: 50 * peso on: account.
-	
-	expectedReport := OrderedCollection with:'Depósito por 100 pesos' with:'Extracción por 50 pesos' with:'Balance = 50 pesos'.
-	report := account generateReportOf:accountSummary.
-	AccountSummaryToReport new createReportInterface:report.
-	self assert: expectedReport equals: report.! !
+	account _ ReceptiveAccount new.
+	Deposit
+		register: 100 * peso
+		on: account.
+	Withdraw
+		register: 50 * peso
+		on: account.
+	expectedReport _ OrderedCollection
+		with: 'Depósito por 100 pesos'
+		with: 'Extracción por 50 pesos'
+		with: 'Balance = 50 pesos'.
+	report _ account generateReportOf: accountSummary.
+	self
+		assert: expectedReport
+		equals: report.! !
 
 !ReportTest methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 21:10:13'!
 test07TransferNetReportOfAnAccountWithNoTransactionsIsCorrect
@@ -444,6 +453,80 @@ test10TransferNetReportOfAnAccountWithManyTransactionsIsCorrect
 	expectedReport := '100 pesos'.
 	report := account generateReportOf:transferNet.
 	self assert: expectedReport equals: report.! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:33:26'!
+test11PortfolioTreePrinterReportOfAPortofolioWithAnAccountIsCorrect
+	| account expectedReport report portfolio |
+	account _ ReceptiveAccount named: 'Cuenta de Tomás'.
+	portfolio _ Portfolio named: 'Portfolio de familia'.
+	portfolio add: account.
+	expectedReport _ OrderedCollection
+		with: 'Portfolio de familia'
+		with: ' Cuenta de Tomás'.
+	report _ portfolio generateReportOf: (PortfolioTreePrinterReport with: Blanker new).
+	self
+		assert: expectedReport
+		equals: report.! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:33:26'!
+test12PortfolioTreePrinterReportOfAnOrderedTreeIsCorrect
+	| account expectedReport report portfolio portfolio2 |
+	account _ ReceptiveAccount named: 'Cuenta de Tomás'.
+	portfolio _ Portfolio named: 'Portfolio de familia'.
+	portfolio2 _ Portfolio named: 'Portfolio de amigos'.
+	portfolio2 add: account.
+	portfolio add: portfolio2.
+	expectedReport _ OrderedCollection
+		with: 'Portfolio de familia'
+		with: ' Portfolio de amigos'
+		with: '  Cuenta de Tomás'.
+	report _ portfolio
+		generateReportOf: (PortfolioTreePrinterReport
+		with: Blanker new).
+	self
+		assert: expectedReport
+		equals: report.! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:33:26'!
+test13PortfolioTreePrinterReportOfAnUnorderedTreeIsCorrect
+	| account expectedReport report portfolio portfolio2 portfolio3 account2 |
+	account _ ReceptiveAccount named: 'Cuenta de Tomás'.
+	account2 _ ReceptiveAccount named: 'Cuenta de Fulano'.
+	portfolio _ Portfolio named: 'Portfolio de familia'.
+	portfolio2 _ Portfolio named: 'Portfolio de amigos'.
+	portfolio3 _ Portfolio named: 'Portfolio de primos'.
+	portfolio2 add: account.
+	portfolio add: portfolio2.
+	portfolio2 add: portfolio3.
+	portfolio add: account2.
+	expectedReport _ OrderedCollection
+		with: 'Portfolio de familia'
+		with: ' Portfolio de amigos'
+		with: '  Cuenta de Tomás'
+		with: '  Portfolio de primos'
+		with: ' Cuenta de Fulano'.
+	report _ portfolio generateReportOf: (PortfolioTreePrinterReport with: Blanker new).
+	self
+		assert: expectedReport
+		equals: report.! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:33:37'!
+test14PortfolioDetailedTreePrinterReportOfAPortofolioWithAnAccountIsCorrect
+	| account expectedReport report portfolio |
+	account _ ReceptiveAccount named: 'Cuenta de Tomás'.
+	portfolio _ Portfolio named: 'Portfolio de familia'.
+	portfolio add: account.
+	expectedReport _ OrderedCollection
+		with: 'Portfolio de familia'
+		with: ' Cuenta de Tomás'
+		with: '  Balance = 0 pesos'.
+	report _ portfolio generateReportOf:
+		(PortfolioDetailedTreePrinterReport
+			withABlanker: Blanker new
+			andAnAccountSummary: accountSummary).
+	self
+		assert: expectedReport
+		equals: report.! !
 
 
 !classDefinition: #TransferTest category: 'ServiciosFinancieros'!
@@ -552,7 +635,7 @@ test06CannotTransferAZeroAmount
 
 !classDefinition: #Account category: 'ServiciosFinancieros'!
 Object subclass: #Account
-	instanceVariableNames: ''
+	instanceVariableNames: 'name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros'!
@@ -594,12 +677,14 @@ addTransactionsTo: aCollectionOfTransactions
 generateReportOf:aReportType
 	^aReportType generateFor:self.! !
 
-!Account methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:50:49'!
-transferNet
-	
-	^(self transactions 
-		inject: 0 * peso
-		into: [ :currentBalance :transaction | transaction sumTransferValueTo: currentBalance ]) printString.! !
+!Account methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:58:45'!
+name
+	^name.! !
+
+!Account methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:32:40'!
+named: aName
+
+	self subclassResponsibility.! !
 
 
 !classDefinition: #Portfolio category: 'ServiciosFinancieros'!
@@ -711,6 +796,19 @@ signalCanNotAddAccount
 	
 	self error: self class canNotAddAccountErrorMessage! !
 
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:56:42'!
+accounts
+
+	^ accounts.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:38:49'!
+initializeWith: aName
+
+	name:= aName.
+	
+	self initialize.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Portfolio class' category: 'ServiciosFinancieros'!
@@ -721,6 +819,11 @@ Portfolio class
 canNotAddAccountErrorMessage
 	
 	^'Can not add repeated account to a portfolio'! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:37:59'!
+named: aName
+
+	^ self new initializeWith: aName.! !
 
 !Portfolio class methodsFor: 'as yet unclassified' stamp: 'HAW 5/25/2019 11:18:21'!
 with: anAccount
@@ -793,6 +896,59 @@ isComposedBy: anAccount
 
 	^self = anAccount ! !
 
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:40:01'!
+initializeWith: aName
+
+	name := aName! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ReceptiveAccount class' category: 'ServiciosFinancieros'!
+ReceptiveAccount class
+	instanceVariableNames: ''!
+
+!ReceptiveAccount class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:39:26'!
+named: aName
+
+	^ self new initializeWith: aName
+	! !
+
+
+!classDefinition: #AccountSummaryReportAdapter category: 'ServiciosFinancieros'!
+Object subclass: #AccountSummaryReportAdapter
+	instanceVariableNames: 'dictionary'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
+
+!AccountSummaryReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:14:43'!
+doesNotUnderstand: aMessage
+	(dictionary includesKey: aMessage selector) ifTrue: [ ^ (dictionary at: aMessage selector) value].
+	^ super doesNotUnderstand: aMessage.! !
+
+!AccountSummaryReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:30:35'!
+initializeWith: aDictionary
+	dictionary:= aDictionary .! !
+
+!AccountSummaryReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:25:08'!
+show: aBlock withAValue: aValue
+	| structure |
+	structure _ aBlock value.
+	^ structure , aValue printString.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountSummaryReportAdapter class' category: 'ServiciosFinancieros'!
+AccountSummaryReportAdapter class
+	instanceVariableNames: ''!
+
+!AccountSummaryReportAdapter class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:30:06'!
+for: aDictionary
+	^ self new
+		initializeWith: aDictionary .
+! !
+
 
 !classDefinition: #AccountSummaryToReport category: 'ServiciosFinancieros'!
 Object subclass: #AccountSummaryToReport
@@ -827,9 +983,10 @@ affectBalance: aBalance
 	self subclassResponsibility ! !
 
 
-!AccountTransaction methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:46:47'!
-asDrawableLikeReport
-	self subclassResponsibility.! !
+!AccountTransaction methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 11:46:27'!
+asDrawableLikeReport: aModel
+
+	self subclassResponsibility .! !
 
 !AccountTransaction methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:48:28'!
 sumTransferValueTo:aBalance
@@ -862,16 +1019,11 @@ affectBalance: aBalance
 	^aBalance + value ! !
 
 
-!Deposit methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:48:20'!
-asDrawableLikeReport
-	^'Depósito por ', self value printString.! !
-
-!Deposit methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:57:01'!
+!Deposit methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:24:43'!
 asDrawableLikeReport: aModel
-	"^ 'Depósito por ' , self value printString."
-	^aModel
-		procesar: [ aModel asDrawableLikeADeposit ]
-		y: self value.! !
+	^ aModel
+		show: [ aModel asDrawableLikeADeposit ]
+		withAValue: self value.! !
 
 !Deposit methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:48:53'!
 sumTransferValueTo:aBalance
@@ -919,9 +1071,10 @@ initializeWith: aTransfer
 	transfer := aTransfer! !
 
 
-!TransferLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:47:40'!
-asDrawableLikeReport
-	self subclassResponsibility.! !
+!TransferLeg methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 11:46:13'!
+asDrawableLikeReport: aModel
+
+	self subclassResponsibility .! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -959,9 +1112,11 @@ affectBalance: aBalance
 	^aBalance + self value! !
 
 
-!TransferDepositLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:49:25'!
-asDrawableLikeReport
-	^'Entrada por transferencia de ', self value printString.! !
+!TransferDepositLeg methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:24:43'!
+asDrawableLikeReport: aModel
+	^ aModel
+		show: [ aModel asDrawableLikeAnInboundTransfer ]
+		withAValue: self value.! !
 
 !TransferDepositLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:49:48'!
 sumTransferValueTo:aBalance
@@ -987,9 +1142,11 @@ affectBalance: aBalance
 	^aBalance - self value! !
 
 
-!TransferWithdrawLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:49:44'!
-asDrawableLikeReport
-	^'Salida por transferencia de ', self value printString.! !
+!TransferWithdrawLeg methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:24:43'!
+asDrawableLikeReport: aModel
+	^ aModel
+		show: [ aModel asDrawableLikeAnOutboundTransfer ]
+		withAValue: self value.! !
 
 !TransferWithdrawLeg methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:50:01'!
 sumTransferValueTo:aBalance
@@ -1021,9 +1178,11 @@ affectBalance: aBalance
 	^aBalance - value! !
 
 
-!Withdraw methodsFor: 'as yet unclassified' stamp: 'MG 7/10/2021 16:48:47'!
-asDrawableLikeReport
-	^'Extracción por ', self value printString.! !
+!Withdraw methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 16:24:43'!
+asDrawableLikeReport: aModel
+	^ aModel
+		show: [ aModel asDrawableLikeAWithdraw ]
+		withAValue: self value.! !
 
 !Withdraw methodsFor: 'as yet unclassified' stamp: 'MG 7/12/2021 20:49:28'!
 sumTransferValueTo:aBalance
@@ -1052,40 +1211,40 @@ register: aValue on: account
 	^ transaction! !
 
 
-!classDefinition: #ReportAdapter category: 'ServiciosFinancieros'!
-Object subclass: #ReportAdapter
-	instanceVariableNames: 'dictionary'
+!classDefinition: #Blanker category: 'ServiciosFinancieros'!
+Object subclass: #Blanker
+	instanceVariableNames: 'amount'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros'!
 
-!ReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:14:43'!
-doesNotUnderstand: aMessage
-	(dictionary includesKey: aMessage selector) ifTrue: [ ^ (dictionary at: aMessage selector) value].
-	^ super doesNotUnderstand: aMessage.! !
+!Blanker methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:00:16'!
+decrease
+	amount:=amount -1! !
 
-!ReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:30:35'!
-initializeWith: aDictionary
-	dictionary:= aDictionary .! !
+!Blanker methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 17:35:18'!
+increase
 
-!ReportAdapter methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 10:52:22'!
-procesar: aMessage y: aValue
-	" aMessage."
-	| string |
-	string _ (aMessage value).
-	^ string , aValue printString.! !
+	amount := amount +1.! !
 
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+!Blanker methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 17:55:10'!
+initialize
+	amount _ 1.! !
 
-!classDefinition: 'ReportAdapter class' category: 'ServiciosFinancieros'!
-ReportAdapter class
-	instanceVariableNames: ''!
+!Blanker methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 17:55:06'!
+modify: aString
+	| modifiedString |
+	modifiedString _ aString.
+	amount timesRepeat: [ modifiedString _ ' ' , modifiedString ].
+	^ modifiedString.! !
 
-!ReportAdapter class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 09:30:06'!
-for: aDictionary
-	^ self new
-		initializeWith: aDictionary .
-! !
+!Blanker methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:24:58'!
+modifyAll: aCollection
+	| modifiedCollection |
+	modifiedCollection _ OrderedCollection new.
+	aCollection do: [ :aString |
+		modifiedCollection add: (self modify: aString) ].
+	^ modifiedCollection.! !
 
 
 !classDefinition: #ReportType category: 'ServiciosFinancieros'!
@@ -1131,6 +1290,116 @@ AccountSummaryReport class
 for: aAdapter
 
 	^self new initializeWith: aAdapter! !
+
+
+!classDefinition: #PortfolioDetailedTreePrinterReport category: 'ServiciosFinancieros'!
+ReportType subclass: #PortfolioDetailedTreePrinterReport
+	instanceVariableNames: 'blanker accountSummary'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
+
+!PortfolioDetailedTreePrinterReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:16:06'!
+addAccountsName: aCollectionOfAccounts to: aTreeStructure
+	aCollectionOfAccounts do: [ :anAccount |
+		(anAccount isKindOf: Portfolio)
+			ifTrue: [
+				aTreeStructure add: (blanker modify: anAccount name).
+				blanker increase.
+				self
+					addAccountsName: anAccount accounts
+					to: aTreeStructure ]
+			ifFalse: [ | summaryCollection |
+				aTreeStructure add: (blanker modify: anAccount name).
+				blanker increase.
+				summaryCollection _ anAccount generateReportOf: accountSummary.
+				aTreeStructure addAll: (blanker modifyAll: summaryCollection). 
+				blanker decrease ]].
+	blanker decrease.
+	^ aTreeStructure.! !
+
+!PortfolioDetailedTreePrinterReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:09:27'!
+generateFor: aPortfolio
+	| treeStructure aCollectionOfAccounts |
+	treeStructure _ OrderedCollection new.
+	treeStructure add: aPortfolio name.
+	aCollectionOfAccounts _ aPortfolio accounts.
+	^ self
+		addAccountsName: aCollectionOfAccounts
+		to: treeStructure! !
+
+!PortfolioDetailedTreePrinterReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:22:06'!
+initializeWithABlanker: aBlanker andAnAccountSummary: anAccountSummaryReport
+
+	blanker:=aBlanker.
+	accountSummary:=anAccountSummaryReport .! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PortfolioDetailedTreePrinterReport class' category: 'ServiciosFinancieros'!
+PortfolioDetailedTreePrinterReport class
+	instanceVariableNames: ''!
+
+!PortfolioDetailedTreePrinterReport class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:09:27'!
+with: aBlanker
+
+
+	^self new initializeWith: aBlanker.! !
+
+!PortfolioDetailedTreePrinterReport class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:21:30'!
+withABlanker: aBlanker andAnAccountSummary: anAccountSummaryReport
+	^ self new
+		initializeWithABlanker: aBlanker
+		andAnAccountSummary: anAccountSummaryReport.! !
+
+
+!classDefinition: #PortfolioTreePrinterReport category: 'ServiciosFinancieros'!
+ReportType subclass: #PortfolioTreePrinterReport
+	instanceVariableNames: 'blanker'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros'!
+
+!PortfolioTreePrinterReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 18:01:08'!
+addAccountsName: aCollectionOfAccounts to: aTreeStructure
+	aCollectionOfAccounts do: [ :anAccount |
+		(anAccount isKindOf: Portfolio)
+			ifTrue: [
+				aTreeStructure add: (blanker modify: anAccount name).
+				blanker increase.
+				self
+					addAccountsName: anAccount accounts
+					to: aTreeStructure ]
+			ifFalse: [ aTreeStructure add: (blanker modify: anAccount name) ]].
+	blanker decrease.
+	^ aTreeStructure.! !
+
+!PortfolioTreePrinterReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 17:25:27'!
+generateFor: aPortfolio
+	| treeStructure aCollectionOfAccounts |
+	treeStructure _ OrderedCollection new.
+	treeStructure add: aPortfolio name.
+	aCollectionOfAccounts _ aPortfolio accounts.
+	^ self
+		addAccountsName: aCollectionOfAccounts
+		to: treeStructure! !
+
+!PortfolioTreePrinterReport methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 17:32:29'!
+initializeWith: aBlanker
+
+	blanker:=aBlanker.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PortfolioTreePrinterReport class' category: 'ServiciosFinancieros'!
+PortfolioTreePrinterReport class
+	instanceVariableNames: ''!
+
+!PortfolioTreePrinterReport class methodsFor: 'as yet unclassified' stamp: 'TP 7/15/2021 17:32:07'!
+with: aBlanker
+
+
+	^self new initializeWith: aBlanker.! !
 
 
 !classDefinition: #TransferNetReport category: 'ServiciosFinancieros'!
