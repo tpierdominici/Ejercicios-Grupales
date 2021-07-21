@@ -5,146 +5,133 @@ TestCase subclass: #TestLog
 	poolDictionaries: ''
 	category: 'MarsRover-Solucion'!
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:50:18'!
-test01
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 20:02:19'!
+test01PositionLogIsEmptyWhenNoCommands
 
 	| aMarsRover positionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	positionLog:= PositionLog new.
-	aMarsRover addNewLog: positionLog .
+	aMarsRover addService: positionLog .
 	aMarsRover processCommands: ''.
 	
 	
-	self assert: 0 equals: (positionLog size).
+	self assert: 0 equals: (aMarsRover managers first log size).
 	
 	
 	! !
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:49:09'!
-test02
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:49:23'!
+test02PositionLogIsCorrectWhenMarsRoverMovesForward
 
 	| aMarsRover positionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	positionLog:= PositionLog new.
-	aMarsRover addNewLog: positionLog.
+	aMarsRover addService: positionLog.
 	aMarsRover processCommands: 'f'.
 	
 	
-	self assert: 1 equals: positionLog size.
-	self assert: '0@1' equals: positionLog first .
+	self assert: 1 equals: (aMarsRover managers first log) size.
+	self assert: '0@1' equals: aMarsRover managers first log first .
 	
 	
 	! !
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:49:39'!
-test03
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:50:27'!
+test03PositionLogIsCorrectWhenMarsRoverMovesBackward
 
 	| aMarsRover positionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	positionLog:= PositionLog new.
-	aMarsRover addNewLog: positionLog.
+	aMarsRover addService: positionLog.
 	aMarsRover processCommands: 'b'.
 	
 	
-	self assert: 1 equals: positionLog size.
-	self assert: '0@-1' equals: positionLog first .
+	self assert: 1 equals: aMarsRover managers first log size.
+	self assert: '0@-1' equals: (aMarsRover managers first) log first .
 	
 	
 	! !
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:55:12'!
-test04
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:50:56'!
+test04DirectionLogIsCorrectWhenMarsRoverTurnRight
 
 	| aMarsRover directionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	directionLog:= DirectionLog new.
-	aMarsRover addNewLog: directionLog.
+	aMarsRover addService: directionLog.
 	aMarsRover processCommands: 'r'.
 	
 	
-	self assert: 1 equals: directionLog size.
-	self assert: 'Este' equals: directionLog first .
+	self assert: 1 equals: aMarsRover managers first log size.
+	self assert: 'Este' equals: aMarsRover managers first log first .
 	
 	
 	! !
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:55:30'!
-test05
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:51:23'!
+test05DirectionLogIsCorrectWhenMarsRoverTurnLeft
 
 	| aMarsRover directionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	directionLog:= DirectionLog new.
-	aMarsRover addNewLog: directionLog.
+	aMarsRover addService: directionLog.
 	aMarsRover processCommands: 'l'.
 	
 	
-	self assert: 1 equals: directionLog size.
-	self assert: 'Oeste' equals: directionLog first .
+	self assert: 1 equals: aMarsRover managers first log  size.
+	self assert: 'Oeste' equals: aMarsRover managers first log first .
 	
 	
 	! !
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:55:55'!
-test06
-
-	| aMarsRover directionLog |
-	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
-	directionLog:= DirectionLog new.
-	aMarsRover addNewLog: directionLog.
-	aMarsRover processCommands: 'r'.
-	
-	
-	self assert: 1 equals: directionLog size.
-	self assert: 'Este' equals: directionLog first .
-	
-	
-	! !
-
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:57:37'!
-test07
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:51:40'!
+test06DirectionLogIsCorrectWhenMarsRoverTurnLeftHeadingOtherDirection
 
 	| aMarsRover directionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #East.
 	directionLog:= DirectionLog new.
-	aMarsRover addNewLog: directionLog.
+	aMarsRover addService: directionLog.
 	aMarsRover processCommands: 'l'.
 	
 	
-	self assert: 1 equals: directionLog size.
-	self assert: 'Norte' equals: directionLog first .
+	self assert: 1 equals: aMarsRover managers first log size.
+	self assert: 'Norte' equals: aMarsRover managers first log first .
 	
 	
 	! !
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:01:43'!
-test08
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:52:13'!
+test08DirectionAndPositionLogIsCorrectWhenMarsRoverMovesForward
 
 	| aMarsRover directionLog positionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #East.
-	directionLog:= DirectionLog new.
 	positionLog:= PositionLog new.
-	aMarsRover addNewLog: directionLog.
-	aMarsRover addNewLog: positionLog.
+	directionLog:= DirectionLog new.
+	aMarsRover addService: positionLog.
+	aMarsRover addService: directionLog.
 	aMarsRover processCommands: 'f'.
 	
-	self assert: 1 equals: positionLog size.
-	self assert: '1@0' equals: positionLog first .
+	self assert: 1 equals: aMarsRover managers first log size .
+	self assert: '1@0' equals: aMarsRover managers first log first .
+	
 	
 	
 	! !
 
-!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:45:26'!
-test09
+!TestLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:58:38'!
+test09DirectionAndPositionLogIsCorrectWhenMarsRoverMovesForwardAndTurnRigth
 
-	| aMarsRover  generalLog |
+	| aMarsRover  directionLog positionLog |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
-	generalLog:= GeneralLog new.
-	
-	aMarsRover addNewLog: generalLog.
+	positionLog:= PositionLog new.
+	directionLog:= DirectionLog new.
+	aMarsRover addService: positionLog.
+	aMarsRover addService: directionLog.
 	aMarsRover processCommands: 'fr'.
 	
-	self assert: 2 equals: generalLog size.
-	self assert: (OrderedCollection with: '0@1' with:'Este') equals: generalLog log .
+	self assert: 2 equals: aMarsRover managers first log size .
+	self assert: (OrderedCollection with: '0@1' with: 'Este')equals: aMarsRover managers first log .
+	
 	
 	
 	! !
@@ -281,109 +268,95 @@ TestCase subclass: #TestWindow
 	poolDictionaries: ''
 	category: 'MarsRover-Solucion'!
 
-!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:47:02'!
-test01
+!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:59:15'!
+test01PositionWindowIsCorrect
 	| aMarsRover |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	
-	aMarsRover activatePositionWindow.
-	aMarsRover processCommands: ''.
-	
-	self assert: '0@0' equals: (aMarsRover window) visualize .
-! !
-
-!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:47:29'!
-test02
-	| aMarsRover |
-	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
-	
-	aMarsRover activatePositionWindow.
+	aMarsRover addService: PositionWindow new.
 	aMarsRover processCommands: 'f'.
 	
-	self assert: '0@1' equals: (aMarsRover window) visualize .
+	self assert: ' 0@1' equals: aMarsRover managers first visualize .
 ! !
 
-!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:54:53'!
-test03
+!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:59:58'!
+test02DirectionWindowIsCorrect
 	| aMarsRover |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	
-	aMarsRover activateDireccionWindow.
-	aMarsRover processCommands: ''.
+	aMarsRover addService: DirectionWindow new.
+	aMarsRover processCommands: 'r'.
 	
-	self assert: 'Norte' equals: (aMarsRover window) visualize .
+	self assert: ' Este' equals: aMarsRover managers first visualize .
 ! !
 
-!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 10:04:35'!
-test04
+!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 20:00:14'!
+test03WindowWithPositionAndDirectionIsCorrect
 	| aMarsRover |
 	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
 	
-	aMarsRover activateDireccionWindow.
-	aMarsRover activatePositionWindow .
-	aMarsRover processCommands: ''.
-	
-	self assert: '0@0 Norte' equals: (aMarsRover window) visualize .
-! !
-
-!TestWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 10:23:13'!
-test05testing
-	| aMarsRover |
-	aMarsRover := MarsRover startingAt: 0@0 heading: #North.
-	
-	aMarsRover activateDireccionWindow.
-	aMarsRover activatePositionWindow .
-	aMarsRover activatePositionLog .
-	aMarsRover activateDireccionLog .
+	aMarsRover addService: PositionWindow new.
+	aMarsRover addService: DirectionWindow new.
 	aMarsRover processCommands: 'fr'.
 	
-	self assert: '0@1 Este' equals: (aMarsRover window) visualize .
-	self assert: (OrderedCollection with: '0@1' with: 'Este') equals: aMarsRover log.
+	self assert: ' 0@1 Este' equals: aMarsRover managers first visualize .
 ! !
 
 
-!classDefinition: #GeneralLog category: 'MarsRover-Solucion'!
-Object subclass: #GeneralLog
-	instanceVariableNames: 'collectionOfEntries logs'
+!classDefinition: #LogManager category: 'MarsRover-Solucion'!
+Object subclass: #LogManager
+	instanceVariableNames: 'logs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MarsRover-Solucion'!
 
-!GeneralLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:49:55'!
-add: aLog
+!LogManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:43:08'!
+add: aTypeOfLog
 
-	logs add: aLog.! !
+	logs add: aTypeOfLog .! !
 
-!GeneralLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:49:32'!
+!LogManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:08:14'!
+combineInUniqueLog
+
+	| uniqueLog |
+	uniqueLog:= OrderedCollection new.
+	1 to: logs first numberOfMovements do:[:index|
+	logs do:[:aLog| (aLog log) at: index ifPresent:[:value|uniqueLog add: value]]].
+
+	^uniqueLog.! !
+
+!LogManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:42:51'!
 initialize
-
+	
 	logs:= OrderedCollection new.
-	collectionOfEntries:=OrderedCollection new.
-! !
+	! !
 
-!GeneralLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:52:10'!
-updateFor: aMarsRover
+!LogManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:49:52'!
+log
 
-	logs do: [:aLog| aLog registerANewMovementOf: self].! !
+	^ self combineInUniqueLog.! !
+
+!LogManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:10:44'!
+updateWithNewChangesOf: aMarsRover
+
+	logs do: [:aLog| aLog registerANewMovementOf: aMarsRover ].! !
 
 
 !classDefinition: #MarsRover category: 'MarsRover-Solucion'!
 Object subclass: #MarsRover
-	instanceVariableNames: 'position head positionLog direccionLog log direccionWindow positionWindow logs'
+	instanceVariableNames: 'position head logManager windowManager managers'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MarsRover-Solucion'!
 
-!MarsRover methodsFor: 'initialization' stamp: 'TP 7/20/2021 18:46:14'!
+!MarsRover methodsFor: 'initialization' stamp: 'TP 7/21/2021 19:38:48'!
 initializeStartingAt: aPosition heading: aCardinalPoint 
 	
 	position := aPosition.
 	head := MarsRoverHead of: self facing: aCardinalPoint.
-	logs:=nil.
-	positionLog := false.
-	direccionLog := false.
-	direccionWindow := false.
-	positionWindow := false.
+	managers:= OrderedCollection new.
+	"logManager:=nil.
+	windowManager:=nil."
 	
 	! !
 
@@ -508,74 +481,46 @@ headWest
 	self update.! !
 
 
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:34:59'!
-activateDireccionLog
-	log ifNil:[log:=OrderedCollection new.].
-	direccionLog:=true.! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:56:43'!
+addService: anElementOfService
 
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 10:00:52'!
-activateDireccionWindow
-	direccionWindow:= true.! !
-
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:29:50'!
-activatePositionLog
-	log ifNil:[log:=OrderedCollection new.].
-	positionLog:=true.! !
-
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 10:15:25'!
-activatePositionWindow
-	positionWindow:= true.
-	! !
-
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:46:56'!
-addNewLog: aTypeOfLog
-	logs ifNil:[logs:=OrderedCollection new].
-	logs add: aTypeOfLog .
-	aTypeOfLog setForAMarsRover:self.! !
+	| managerOfTheService |
+	managerOfTheService:=managers detect:[:aManager| aManager isKindOf: anElementOfService manager] 
+	ifNone:[managers add:(anElementOfService manager new)].
+	
+	
+	managerOfTheService add: anElementOfService .
+	anElementOfService setForAMarsRover:self.! !
 
 !MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:51:44'!
 direction
 	
 	^head nameForLog .! !
 
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:33:23'!
-log
-	^log.
-	
-	
-	! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:14:27'!
+logManager
+
+	^logManager .! !
+
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:49:10'!
+managers
+
+	^managers.! !
 
 !MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:32:01'!
 position
 
 	^position.! !
 
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:51:59'!
-registerNewDireccion
-
-	direccionLog ifTrue: [log add:(head nameForLog ) ].
-	! !
-
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:51:51'!
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:40:17'!
 update
-
-	log updateFor: self.
-	! !
-
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 10:18:47'!
-visualize
-	| finalResult |
-	finalResult:=''.
-	positionWindow ifTrue:[finalResult := position printString ].
-	direccionWindow ifTrue: [
-		(finalResult ='') ifTrue: [^head nameForLog].
-		finalResult:= finalResult,' ',head nameForLog ].
-	^finalResult .
-	! !
-
-!MarsRover methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 09:45:31'!
-window
-	self! !
+	
+	
+	managers do:[:aManager| aManager updateWithNewChangesOf: self].
+	"logManager ifNotNil: [logManager updateWithNewChangesOf: self].
+	
+	windowManager ifNotNil: [windowManager updateWithNewChangesOf: self].
+	"! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -845,51 +790,72 @@ whenFacing: aCardinalPoint
 
 !classDefinition: #TypeOfLogs category: 'MarsRover-Solucion'!
 Object subclass: #TypeOfLogs
-	instanceVariableNames: 'collection lastEntry'
+	instanceVariableNames: 'dictionary lastEntry numberOfMovements'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'MarsRover-Solucion'!
 
-!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:28:47'!
-add: newEntry
-
-	collection add: newEntry .! !
-
-!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:44:35'!
-first
-
-	^collection first.! !
-
-!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:47:50'!
+!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:57:07'!
 initialize
 
-	collection:= OrderedCollection new.
+	dictionary:= Dictionary new.
+	numberOfMovements :=1.
 	! !
 
-!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:11:32'!
+!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:57:07'!
 log
 	
-	^collection.! !
+	^dictionary.! !
+
+!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:34:26'!
+manager
+
+	^LogManager.! !
+
+!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:07:27'!
+numberOfMovements
+
+	^numberOfMovements .! !
 
 !TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 10:55:28'!
 registerANewMovementOf: aMarsRover
 
 	self subclassResponsibility .! !
 
-!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:44:41'!
-second
-
-	^collection second.! !
-
 !TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:36:36'!
 setForAMarsRover:aMarsRover
 
 	self subclassResponsibility .! !
 
-!TypeOfLogs methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:16:13'!
-size
+
+!classDefinition: #DirectionAndPositionLog category: 'MarsRover-Solucion'!
+TypeOfLogs subclass: #DirectionAndPositionLog
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MarsRover-Solucion'!
 
-	^self log size.! !
+!DirectionAndPositionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:57:07'!
+registerANewMovementOf: aMarsRover
+	
+	| newDirection newPosition|
+	newDirection:=aMarsRover direction.
+	(newDirection=lastEntry second) ifFalse: [
+		dictionary add: newDirection .
+		lastEntry at:2 put:newDirection ].
+	
+	newPosition:=aMarsRover position.
+	(newPosition=lastEntry first) ifFalse: [
+		dictionary add: newPosition printString.
+		lastEntry at:1 put:newPosition ].! !
+
+!DirectionAndPositionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 16:36:05'!
+setForAMarsRover:aMarsRover
+
+	lastEntry:= OrderedCollection with: aMarsRover position with: aMarsRover direction.
+	
+	
+! !
 
 
 !classDefinition: #DirectionLog category: 'MarsRover-Solucion'!
@@ -899,18 +865,17 @@ TypeOfLogs subclass: #DirectionLog
 	poolDictionaries: ''
 	category: 'MarsRover-Solucion'!
 
-!DirectionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:32:55'!
-log
-	^super log.! !
-
-!DirectionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:28:22'!
+!DirectionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:57:07'!
 registerANewMovementOf: aMarsRover
 	
 	| newDirection |
 	newDirection:=aMarsRover direction.
 	(newDirection=lastEntry) ifFalse: [
-		super add: newDirection .
-		lastEntry := newDirection ].! !
+		dictionary add: (Association key: numberOfMovements value: newDirection) .
+		lastEntry := newDirection ].
+	
+	numberOfMovements := numberOfMovements +1.
+	! !
 
 !DirectionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 18:52:35'!
 setForAMarsRover:aMarsRover
@@ -926,19 +891,16 @@ TypeOfLogs subclass: #PositionLog
 	poolDictionaries: ''
 	category: 'MarsRover-Solucion'!
 
-!PositionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:32:50'!
-log
-	
-	^super log.! !
-
-!PositionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/20/2021 19:29:02'!
+!PositionLog methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:57:07'!
 registerANewMovementOf: aMarsRover
 	
 	| newPosition |
 	newPosition:=aMarsRover position.
 	(newPosition=lastEntry) ifFalse: [
-		super add: newPosition printString.
+		dictionary add: (Association key: numberOfMovements value: newPosition printString).
 		lastEntry := newPosition ].
+	
+	numberOfMovements := numberOfMovements +1.
 	
 	
 	! !
@@ -948,3 +910,97 @@ setForAMarsRover:aMarsRover
 
 	lastEntry:= aMarsRover position.
 ! !
+
+
+!classDefinition: #TypeOfWindow category: 'MarsRover-Solucion'!
+Object subclass: #TypeOfWindow
+	instanceVariableNames: 'observedVariable'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MarsRover-Solucion'!
+
+!TypeOfWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:04:49'!
+addStateFrom:currentResult
+
+	self subclassResponsibility .! !
+
+!TypeOfWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:34:42'!
+manager
+
+	^WindowManager.! !
+
+!TypeOfWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 19:57:29'!
+setForAMarsRover: aMarsRover
+		
+	self.! !
+
+!TypeOfWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 18:04:26'!
+updateWith: aMarsRover
+
+	self subclassResponsibility .! !
+
+
+!classDefinition: #DirectionWindow category: 'MarsRover-Solucion'!
+TypeOfWindow subclass: #DirectionWindow
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MarsRover-Solucion'!
+
+!DirectionWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:47:03'!
+addStateFrom:currentResult
+
+	^ currentResult,' ',observedVariable .! !
+
+!DirectionWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:46:42'!
+updateWith: aMarsRover
+
+	observedVariable := aMarsRover direction.! !
+
+
+!classDefinition: #PositionWindow category: 'MarsRover-Solucion'!
+TypeOfWindow subclass: #PositionWindow
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MarsRover-Solucion'!
+
+!PositionWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:36:45'!
+addStateFrom:currentResult
+
+	^ currentResult,' ',observedVariable printString .! !
+
+!PositionWindow methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:27:38'!
+updateWith: aMarsRover
+
+	observedVariable := aMarsRover position.! !
+
+
+!classDefinition: #WindowManager category: 'MarsRover-Solucion'!
+Object subclass: #WindowManager
+	instanceVariableNames: 'windows'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'MarsRover-Solucion'!
+
+!WindowManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:16:25'!
+add: aTypeOfWindow
+
+	windows add: aTypeOfWindow .! !
+
+!WindowManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:16:04'!
+initialize
+
+	windows:= OrderedCollection new.! !
+
+!WindowManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:33:56'!
+updateWithNewChangesOf: aMarsRover
+	
+	windows do:[:aTypeOfWindow| aTypeOfWindow updateWith: aMarsRover ].
+
+	! !
+
+!WindowManager methodsFor: 'as yet unclassified' stamp: 'TP 7/21/2021 17:35:59'!
+visualize
+
+	^windows inject: '' into:[:currentResult :aTypeOfWindow| aTypeOfWindow addStateFrom:currentResult ].! !
